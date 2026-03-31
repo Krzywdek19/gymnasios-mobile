@@ -3,7 +3,7 @@ package com.krzywdek19.gymnasiosmobile.data.repository
 import com.krzywdek19.gymnasiosmobile.data.mapper.toDomain
 import com.krzywdek19.gymnasiosmobile.data.remote.TrainingPlanApi
 import com.krzywdek19.gymnasiosmobile.domain.model.TrainingPlan
-import com.krzywdek19.gymnasiosmobile.domain.model.repository.TrainingPlanRepository
+import com.krzywdek19.gymnasiosmobile.domain.repository.TrainingPlanRepository
 
 class TrainingPlanRepositoryImpl (
     private val api: TrainingPlanApi

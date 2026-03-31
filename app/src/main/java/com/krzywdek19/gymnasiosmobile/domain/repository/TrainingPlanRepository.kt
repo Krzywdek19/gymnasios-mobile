@@ -1,4 +1,4 @@
-package com.krzywdek19.gymnasiosmobile.domain.model.repository
+package com.krzywdek19.gymnasiosmobile.domain.repository
 
 import com.krzywdek19.gymnasiosmobile.domain.model.TrainingPlan
 

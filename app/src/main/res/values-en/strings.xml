@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Gymnasios</string>
-    <string name="training_plans_title">Plany treningowe</string>
+    <string name="training_plans_title">Training plans</string>
     <string name="training_plan_status">Status: %1$s</string>
-    <string name="error_generic">Coś poszło nie tak</string>
+    <string name="error_generic">Something went wrong</string>
 </resources>
