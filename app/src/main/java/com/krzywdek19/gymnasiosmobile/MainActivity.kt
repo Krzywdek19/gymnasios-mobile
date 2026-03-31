@@ -18,7 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.krzywdek19.gymnasiosmobile.ui.theme.GymnasiosMobileTheme
+import com.krzywdek19.gymnasiosmobile.presentation.theme.GymnasiosMobileTheme
+import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.TrainingPlanScreen
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,9 +28,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GymnasiosMobileTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    HomeScreen(modifier = Modifier.padding(innerPadding))
-                }
+                TrainingPlanScreen()
             }
         }
     }
