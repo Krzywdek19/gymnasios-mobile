@@ -3,4 +3,9 @@
     <string name="training_plans_title">Plany treningowe</string>
     <string name="training_plan_status">Status: %1$s</string>
     <string name="error_generic">Coś poszło nie tak</string>
+    <string name="training_plan_details_title">Szczegóły planu</string>
+    <string name="training_plan_id_label">ID planu:</string>
+    <string name="create_plan_title">Nowy plan</string>
+    <string name="plan_name">Nazwa planu</string>
+    <string name="save">Zapisz</string>
 </resources>

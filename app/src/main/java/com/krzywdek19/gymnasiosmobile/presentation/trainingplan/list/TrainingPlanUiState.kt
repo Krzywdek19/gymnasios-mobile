@@ -1,4 +1,4 @@
-package com.krzywdek19.gymnasiosmobile.presentation.trainingplan
+package com.krzywdek19.gymnasiosmobile.presentation.trainingplan.list
 
 import androidx.annotation.StringRes
 import com.krzywdek19.gymnasiosmobile.domain.model.TrainingPlan

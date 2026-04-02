@@ -1,4 +1,4 @@
-package com.krzywdek19.gymnasiosmobile.presentation.trainingplan
+package com.krzywdek19.gymnasiosmobile.presentation.trainingplan.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,23 +8,25 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class TrainingPlanViewModel(
+class TrainingPlanDetailsViewModel(
     private val repository: TrainingPlanRepository
 ) : ViewModel() {
 
     private val _uiState =
-        MutableStateFlow<TrainingPlanUiState>(TrainingPlanUiState.Loading)
-    val uiState: StateFlow<TrainingPlanUiState> = _uiState
+        MutableStateFlow<TrainingPlanDetailsUiState>(
+            TrainingPlanDetailsUiState.Loading
+        )
+    val uiState: StateFlow<TrainingPlanDetailsUiState> = _uiState
 
-    fun loadPlans() {
+    fun loadPlan(id: String) {
         viewModelScope.launch {
-            _uiState.value = TrainingPlanUiState.Loading
+            _uiState.value = TrainingPlanDetailsUiState.Loading
 
             try {
-                val plans = repository.getTrainingPlans()
-                _uiState.value = TrainingPlanUiState.Success(plans)
+                val plan = repository.getTrainingPlanById(id)
+                _uiState.value = TrainingPlanDetailsUiState.Success(plan)
             } catch (e: Exception) {
-                _uiState.value = TrainingPlanUiState.Error(
+                _uiState.value = TrainingPlanDetailsUiState.Error(
                     R.string.error_generic
                 )
             }

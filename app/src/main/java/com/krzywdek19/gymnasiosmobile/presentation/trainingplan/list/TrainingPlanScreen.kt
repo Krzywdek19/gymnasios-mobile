@@ -1,11 +1,11 @@
-package com.krzywdek19.gymnasiosmobile.presentation.trainingplan
+package com.krzywdek19.gymnasiosmobile.presentation.trainingplan.list
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -19,7 +19,7 @@ import com.krzywdek19.gymnasiosmobile.R
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun TrainingPlanScreen( viewModel: TrainingPlanViewModel = viewModel(
+fun TrainingPlanScreen(onPlanClick: (String) -> Unit, onAddClick: () -> Unit, viewModel: TrainingPlanViewModel = viewModel(
     factory = TrainingPlanViewModelFactory()
 )) {
     val uiState by viewModel.uiState.collectAsState()
@@ -33,6 +33,13 @@ fun TrainingPlanScreen( viewModel: TrainingPlanViewModel = viewModel(
             TopAppBar(
                 title = { Text(stringResource(R.string.training_plans_title)) }
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onAddClick
+            ) {
+                Text("+")
+            }
         }
     ) { innerPadding ->
 
@@ -63,7 +70,7 @@ fun TrainingPlanScreen( viewModel: TrainingPlanViewModel = viewModel(
                         TrainingPlanItem(
                             plan = plan,
                             onClick = {
-                                Log.d("TrainingPlan", "Clicked: ${it.id}")
+                                onPlanClick(it.id)
                             }
                         )
                     }
