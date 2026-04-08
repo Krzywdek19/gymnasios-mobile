@@ -5,8 +5,9 @@ import com.krzywdek19.gymnasiosmobile.domain.model.TrainingPlan
 
 fun TrainingPlanDto.toDomain(): TrainingPlan {
     return TrainingPlan(
-        id = id,
-        name = name,
-        status = status
+        id = id.orEmpty(),
+        name = name.orEmpty(),
+        status = status.orEmpty(),
+        workouts = workouts?.map { it.toDomain() } ?: emptyList()
     )
 }

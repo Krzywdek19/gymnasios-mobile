@@ -8,4 +8,16 @@
     <string name="create_plan_title">Nowy plan</string>
     <string name="plan_name">Nazwa planu</string>
     <string name="save">Zapisz</string>
+    <string name="add_workout">Dodaj trening</string>
+    <string name="new_workout">Nowy trening</string>
+    <string name="workout_name">Nazwa treningu</string>
+    <string name="add">Dodaj</string>
+    <string name="cancel">Anuluj</string>
+    <string name="back">Wstecz</string>
+    <string name="next_workout_label">Następny trening</string>
+    <string name="other_workouts">Pozostałe treningi</string>
+    <string name="no_workouts_in_plan">Ten plan nie ma jeszcze żadnych treningów</string>
+    <string name="add_first_workout_hint">Dodaj do planu pierwszy trening korzystając z przycisku poniżej</string>
+    <string name="workout_order">Kolejność: %1$d</string>
+    <string name="order_short">#%1$d</string>
 </resources>

@@ -5,6 +5,7 @@ data class TrainingPlanDto (
     val userEmail: String,
     val name: String,
     val status: String,
+    val workouts: List<WorkoutTemplateDto>?,
     val createdAt: String,
     val updatedAt: String
 )

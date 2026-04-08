@@ -8,4 +8,16 @@
     <string name="create_plan_title">New plan</string>
     <string name="plan_name">Plan name</string>
     <string name="save">Save</string>
+    <string name="add_workout">Add training</string>
+    <string name="new_workout">New training</string>
+    <string name="workout_name">Training name</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="back">Back</string>
+    <string name="next_workout_label">Next training</string>
+    <string name="other_workouts">Remaining trainings</string>
+    <string name="no_workouts_in_plan">This plan does not have trainings yet</string>
+    <string name="add_first_workout_hint">Add your first training using the button below.</string>\
+    <string name="workout_order">Order: %1$d</string>
+    <string name="order_short">#%1$d</string>
 </resources>
