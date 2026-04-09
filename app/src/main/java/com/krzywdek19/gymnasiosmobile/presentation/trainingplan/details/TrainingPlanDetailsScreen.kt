@@ -22,7 +22,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -49,7 +48,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.krzywdek19.gymnasiosmobile.R
-import com.krzywdek19.gymnasiosmobile.domain.model.WorkoutTemplate
+import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.details.components.NextWorkoutCard
+import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.details.components.WorkoutCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -187,7 +187,7 @@ fun TrainingPlanDetailsScreen(
                             }
 
                             item {
-                                NextWorkoutCard(workout = workout)
+                                NextWorkoutCard(workout = workout, onClick = {}, onDelete = { workoutId -> viewModel.deleteWorkout(workoutId)})
                             }
                         }
 
@@ -206,7 +206,7 @@ fun TrainingPlanDetailsScreen(
                             }
 
                             items(remainingWorkouts) { workout ->
-                                WorkoutCard(workout = workout)
+                                WorkoutCard(workout = workout, onClick = {}, onDelete = { workoutId -> viewModel.deleteWorkout(workoutId)})
                             }
                         }
                     }
@@ -289,69 +289,6 @@ private fun StatusChip(
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSecondaryContainer
         )
-    }
-}
-
-@Composable
-private fun NextWorkoutCard(
-    workout: WorkoutTemplate
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.65f)
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(18.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = workout.name,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold
-            )
-
-            Text(
-                text = stringResource(R.string.workout_order, workout.orderIndex),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
-}
-
-@Composable
-private fun WorkoutCard(
-    workout: WorkoutTemplate
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(18.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            Text(
-                text = workout.name,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Medium
-            )
-
-            Text(
-                text = stringResource(R.string.workout_order, workout.orderIndex),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
     }
 }
 

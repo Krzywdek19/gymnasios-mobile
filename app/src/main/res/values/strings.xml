@@ -20,4 +20,5 @@
     <string name="add_first_workout_hint">Dodaj do planu pierwszy trening korzystając z przycisku poniżej</string>
     <string name="workout_order">Kolejność: %1$d</string>
     <string name="order_short">#%1$d</string>
+    <string name="delete_workout">Usuń trening</string>
 </resources>

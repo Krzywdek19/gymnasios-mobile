@@ -25,4 +25,8 @@ class WorkoutTemplateRepositoryImpl(
             request = request
         ).toDomain()
     }
+
+    override suspend fun deleteWorkoutTemplateById(workoutId: String) {
+        api.deleteWorkoutTemplateById(workoutId)
+    }
 }

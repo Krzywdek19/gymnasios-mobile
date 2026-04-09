@@ -20,4 +20,5 @@
     <string name="add_first_workout_hint">Add your first training using the button below.</string>\
     <string name="workout_order">Order: %1$d</string>
     <string name="order_short">#%1$d</string>
+    <string name="delete_workout">Remove training</string>
 </resources>

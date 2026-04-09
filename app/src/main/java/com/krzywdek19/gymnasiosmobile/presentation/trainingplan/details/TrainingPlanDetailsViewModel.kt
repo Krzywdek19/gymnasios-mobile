@@ -57,4 +57,22 @@ class TrainingPlanDetailsViewModel(
             }
         }
     }
+
+    fun deleteWorkout(workoutId: String) {
+        val currentState = _uiState.value
+        if (currentState !is TrainingPlanDetailsUiState.Success) return
+
+        val planId = currentState.plan.id
+
+        viewModelScope.launch {
+            try {
+                workoutTemplateRepository.deleteWorkoutTemplateById(workoutId)
+                loadPlan(planId)
+            }catch (e: Exception) {
+                _uiState.value = TrainingPlanDetailsUiState.Error(
+                    R.string.error_generic
+                )
+            }
+        }
+    }
 }

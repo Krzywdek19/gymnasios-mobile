@@ -1,4 +1,4 @@
-package com.krzywdek19.gymnasiosmobile.presentation.navigation
+package com.krzywdek19.gymnasiosmobile.core.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
@@ -14,32 +14,31 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = "training_plans"
+        startDestination = Screen.TrainingPlans.route
     ) {
-        composable("training_plans") {
+        composable(Screen.TrainingPlans.route) {
             TrainingPlanScreen(
                 onPlanClick = { planId ->
-                    navController.navigate("training_plan_details/$planId")
+                    navController.navigate(Screen.TrainingPlanDetails.createRoute(planId))
                 },
                 onAddClick = {
-                    navController.navigate("create_training_plan")
+                    navController.navigate(Screen.CreateTrainingPlan.route)
                 }
             )
         }
 
-        composable("training_plan_details/{planId}") { backStackEntry ->
+        composable(Screen.TrainingPlanDetails.route) { backStackEntry ->
             val planId = backStackEntry.arguments?.getString("planId") ?: ""
-            TrainingPlanDetailsScreen(planId = planId, onBack = {navController.popBackStack()})
+            TrainingPlanDetailsScreen(
+                planId = planId,
+                onBack = { navController.popBackStack() }
+            )
         }
 
-        composable("create_training_plan") {
+        composable(Screen.CreateTrainingPlan.route) {
             CreateTrainingPlanScreen(
-                onSave = {
-                    navController.popBackStack()
-                },
-                onBack = {
-                    navController.popBackStack()
-                }
+                onBack = { navController.popBackStack() },
+                onSave = { navController.popBackStack() }
             )
         }
     }

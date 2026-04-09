@@ -8,4 +8,6 @@ interface WorkoutTemplateRepository {
         name: String,
         orderIndex: Int
     ): WorkoutTemplate
+
+    suspend fun deleteWorkoutTemplateById(workoutId: String)
 }

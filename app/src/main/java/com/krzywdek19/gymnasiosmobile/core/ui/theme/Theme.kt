@@ -1,4 +1,4 @@
-package com.krzywdek19.gymnasiosmobile.presentation.theme
+package com.krzywdek19.gymnasiosmobile.core.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
