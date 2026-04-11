@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
+    <color name="sakura_pink_50">#FFF8FB</color>
+    <color name="sakura_pink_100">#FCEEF4</color>
+    <color name="sakura_pink_200">#F7DCE7</color>
+    <color name="sakura_pink_300">#EDB8CB</color>
+    <color name="sakura_pink_400">#E49AB7</color>
+    <color name="sakura_pink_500">#D97FA3</color>
+
+    <color name="plum_700">#6F4C5E</color>
+    <color name="plum_800">#573846</color>
+    <color name="ink">#2F2329</color>
+
+    <color name="paper">#FFF9FB</color>
+    <color name="paper_soft">#F8F2F4</color>
+
+    <color name="gold_soft">#D9B77A</color>
+    <color name="matcha_soft">#9CAF88</color>
+
     <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
 </resources>

@@ -26,6 +26,10 @@ class WorkoutTemplateRepositoryImpl(
         ).toDomain()
     }
 
+    override suspend fun getWorkoutById(workoutId: String): WorkoutTemplate {
+        return api.getWorkoutTemplateById(workoutId).toDomain()
+    }
+
     override suspend fun deleteWorkoutTemplateById(workoutId: String) {
         api.deleteWorkoutTemplateById(workoutId)
     }

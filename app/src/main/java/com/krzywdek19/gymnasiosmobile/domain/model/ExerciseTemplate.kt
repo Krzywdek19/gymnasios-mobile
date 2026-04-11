@@ -1,8 +1,10 @@
 package com.krzywdek19.gymnasiosmobile.domain.model
 
-data class WorkoutTemplate(
+data class ExerciseTemplate(
     val id: String,
     val name: String,
+    val setsCount: Int,
+    val reps: String,
     val orderIndex: Int,
-    val exercises: List<ExerciseTemplate> = emptyList()
+    val notes: String?
 )

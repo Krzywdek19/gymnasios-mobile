@@ -4,6 +4,7 @@ import com.krzywdek19.gymnasiosmobile.data.remote.dto.CreateWorkoutTemplateReque
 import com.krzywdek19.gymnasiosmobile.data.remote.dto.WorkoutTemplateDto
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -15,8 +16,13 @@ interface WorkoutTemplateApi {
         @Body request: CreateWorkoutTemplateRequest
     ): WorkoutTemplateDto
 
-    @DELETE("api/v1/workout-templates/{workoutId}")
+    @GET("api/v1/workout-templates/{workoutTemplateId}")
+    suspend fun getWorkoutTemplateById(
+        @Path("workoutTemplateId") workoutTemplateId: String
+    ): WorkoutTemplateDto
+
+    @DELETE("api/v1/workout-templates/{workoutTemplateId}")
     suspend fun deleteWorkoutTemplateById(
-        @Path("workoutId") workoutId: String
+        @Path("workoutTemplateId") workoutTemplateId: String
     )
 }

@@ -1,24 +1,48 @@
 <resources>
-    <string name="app_name">Gymnasios</string>
-    <string name="training_plans_title">Training plans</string>
-    <string name="training_plan_status">Status: %1$s</string>
-    <string name="error_generic">Something went wrong</string>
-    <string name="training_plan_details_title">Plan details</string>
-    <string name="training_plan_id_label">Plan ID:</string>
-    <string name="create_plan_title">New plan</string>
-    <string name="plan_name">Plan name</string>
+    <string name="app_name">GymnasiosMobile</string>
+
+    <string name="back">Back</string>
+    <string name="retry">Retry</string>
     <string name="save">Save</string>
-    <string name="add_workout">Add training</string>
-    <string name="new_workout">New training</string>
-    <string name="workout_name">Training name</string>
+    <string name="error_generic">Something went wrong</string>
+
+    <string name="training_plans_title">Training Plans</string>
+    <string name="training_plan_details_title">Training Plan Details</string>
+    <string name="training_plan_status">Status: %1$s</string>
+    <string name="create_training_plan_title">Create Training Plan</string>
+
+    <string name="next_workout_label">Next Workout</string>
+    <string name="other_workouts">Other Workouts</string>
+    <string name="new_workout">New Workout</string>
+    <string name="workout_name">Workout Name</string>
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
-    <string name="back">Back</string>
-    <string name="next_workout_label">Next training</string>
-    <string name="other_workouts">Remaining trainings</string>
-    <string name="no_workouts_in_plan">This plan does not have trainings yet</string>
-    <string name="add_first_workout_hint">Add your first training using the button below.</string>\
-    <string name="workout_order">Order: %1$d</string>
-    <string name="order_short">#%1$d</string>
-    <string name="delete_workout">Remove training</string>
+    <string name="no_workouts_in_plan">No workouts in this plan yet</string>
+    <string name="add_first_workout_hint">Add your first workout to start building the plan.</string>
+    <string name="delete_workout">Delete workout</string>
+    <string name="workout_order">Workout #%1$d</string>
+
+    <string name="workout_details_title_fallback">Workout Details</string>
+    <string name="add_exercise">Add Exercise</string>
+    <string name="add_exercise_title">Add Exercise</string>
+    <string name="no_exercises_yet">No exercises in this workout yet</string>
+    <string name="exercise_sets_reps_format">%1$d x %2$s</string>
+
+    <string name="exercise_name_label">Exercise Name</string>
+    <string name="sets_count_label">Number of Sets</string>
+    <string name="reps_label">Reps</string>
+    <string name="notes_label">Notes</string>
+
+    <string name="error_exercise_name_required">Enter exercise name</string>
+    <string name="error_sets_count_invalid">Enter a valid number of sets</string>
+    <string name="error_reps_required">Enter reps</string>
+    <string name="error_saving_exercise">Failed to save exercise</string>
+
+    <string name="add_workout">Add Workout</string>
+    <string name="delete">Delete</string>
+    <string name="next_workout">Next Workout</string>
+
+    <string name="create_plan_name_label">Plan Name</string>
+    <string name="no_workouts_yet">No workouts in this plan yet</string>
+    <string name="no_plans_yet">You do not have any training plans yet</string>
 </resources>

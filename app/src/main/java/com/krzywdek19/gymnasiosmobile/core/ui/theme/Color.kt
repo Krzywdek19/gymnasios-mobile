@@ -1,15 +1,20 @@
-package com.krzywdek19.gymnasiosmobile.core.ui.theme
+package com.krzywdek19.gymnasiosmobile.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val BackgroundDark = Color(0xFF0F172A)
-val SurfaceDark = Color(0xFF1E293B)
-val SurfaceVariantDark = Color(0xFF334155)
+val SakuraPink50 = Color(0xFFFFF8FB)
+val SakuraPink100 = Color(0xFFFCEEF4)
+val SakuraPink200 = Color(0xFFF7DCE7)
+val SakuraPink300 = Color(0xFFEDB8CB)
+val SakuraPink400 = Color(0xFFE49AB7)
+val SakuraPink500 = Color(0xFFD97FA3)
 
-val PrimaryBlue = Color(0xFF38BDF8)
-val PrimaryBlueDark = Color(0xFF0EA5E9)
+val Plum700 = Color(0xFF6F4C5E)
+val Plum800 = Color(0xFF573846)
+val Ink = Color(0xFF2F2329)
 
-val TextPrimary = Color(0xFFF8FAFC)
-val TextSecondary = Color(0xFFCBD5E1)
+val Paper = Color(0xFFFFF9FB)
+val PaperSoft = Color(0xFFF8F2F4)
 
-val OutlineColor = Color(0xFF475569)
+val GoldSoft = Color(0xFFD9B77A)
+val MatchaSoft = Color(0xFF9CAF88)

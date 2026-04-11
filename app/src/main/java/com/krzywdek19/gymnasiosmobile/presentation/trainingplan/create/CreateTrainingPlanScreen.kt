@@ -35,7 +35,7 @@ fun CreateTrainingPlanScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.create_plan_title)) },
+                title = { Text(stringResource(R.string.create_training_plan_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -58,7 +58,7 @@ fun CreateTrainingPlanScreen(
             OutlinedTextField(
                 value = name,
                 onValueChange = viewModel::onNameChange,
-                label = { Text(stringResource(R.string.plan_name)) },
+                label = { Text(stringResource(R.string.training_plans_title)) },
                 modifier = Modifier.fillMaxWidth()
             )
 

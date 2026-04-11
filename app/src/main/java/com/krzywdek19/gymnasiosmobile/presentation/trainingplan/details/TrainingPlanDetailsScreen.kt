@@ -17,8 +17,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -43,8 +43,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.krzywdek19.gymnasiosmobile.R
@@ -56,6 +56,7 @@ import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.details.componen
 fun TrainingPlanDetailsScreen(
     planId: String,
     onBack: () -> Unit,
+    onWorkoutClick: (String) -> Unit,
     viewModel: TrainingPlanDetailsViewModel = viewModel(
         factory = TrainingPlanDetailsViewModelFactory()
     )
@@ -89,7 +90,7 @@ fun TrainingPlanDetailsScreen(
                         navigationIcon = {
                             IconButton(onClick = onBack) {
                                 Icon(
-                                    imageVector = Icons.Default.ArrowBack,
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                     contentDescription = stringResource(R.string.back)
                                 )
                             }
@@ -105,7 +106,7 @@ fun TrainingPlanDetailsScreen(
                         navigationIcon = {
                             IconButton(onClick = onBack) {
                                 Icon(
-                                    imageVector = Icons.Default.ArrowBack,
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                     contentDescription = stringResource(R.string.back)
                                 )
                             }
@@ -142,7 +143,7 @@ fun TrainingPlanDetailsScreen(
             }
         }
     ) { innerPadding ->
-        when (uiState) {
+        when (val state = uiState) {
             is TrainingPlanDetailsUiState.Loading -> {
                 Box(
                     modifier = Modifier
@@ -155,7 +156,7 @@ fun TrainingPlanDetailsScreen(
             }
 
             is TrainingPlanDetailsUiState.Success -> {
-                val plan = (uiState as TrainingPlanDetailsUiState.Success).plan
+                val plan = state.plan
                 val sortedWorkouts = plan.workouts.sortedBy { it.orderIndex }
                 val nextWorkout = sortedWorkouts.firstOrNull()
                 val remainingWorkouts = sortedWorkouts.drop(1)
@@ -172,7 +173,7 @@ fun TrainingPlanDetailsScreen(
                     ),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    if (plan.workouts.isEmpty()) {
+                    if (sortedWorkouts.isEmpty()) {
                         item {
                             EmptyWorkoutsCard()
                         }
@@ -187,7 +188,13 @@ fun TrainingPlanDetailsScreen(
                             }
 
                             item {
-                                NextWorkoutCard(workout = workout, onClick = {}, onDelete = { workoutId -> viewModel.deleteWorkout(workoutId)})
+                                NextWorkoutCard(
+                                    workout = workout,
+                                    onClick = onWorkoutClick,
+                                    onDelete = { workoutId ->
+                                        viewModel.deleteWorkout(workoutId)
+                                    }
+                                )
                             }
                         }
 
@@ -206,7 +213,13 @@ fun TrainingPlanDetailsScreen(
                             }
 
                             items(remainingWorkouts) { workout ->
-                                WorkoutCard(workout = workout, onClick = {}, onDelete = { workoutId -> viewModel.deleteWorkout(workoutId)})
+                                WorkoutCard(
+                                    workout = workout,
+                                    onClick = onWorkoutClick,
+                                    onDelete = { workoutId ->
+                                        viewModel.deleteWorkout(workoutId)
+                                    }
+                                )
                             }
                         }
                     }
@@ -233,11 +246,14 @@ fun TrainingPlanDetailsScreen(
                         confirmButton = {
                             TextButton(
                                 onClick = {
-                                    viewModel.addWorkout(workoutName.trim())
-                                    workoutName = ""
-                                    showAddDialog = false
+                                    val trimmedName = workoutName.trim()
+                                    if (trimmedName.isNotEmpty()) {
+                                        viewModel.addWorkout(trimmedName)
+                                        workoutName = ""
+                                        showAddDialog = false
+                                    }
                                 },
-                                enabled = workoutName.isNotBlank()
+                                enabled = workoutName.trim().isNotEmpty()
                             ) {
                                 Text(stringResource(R.string.add))
                             }
@@ -257,15 +273,13 @@ fun TrainingPlanDetailsScreen(
             }
 
             is TrainingPlanDetailsUiState.Error -> {
-                val errorRes = (uiState as TrainingPlanDetailsUiState.Error).messageRes
-
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = stringResource(errorRes))
+                    Text(text = stringResource(state.messageRes))
                 }
             }
         }
@@ -273,9 +287,7 @@ fun TrainingPlanDetailsScreen(
 }
 
 @Composable
-private fun StatusChip(
-    planStatus: String
-) {
+private fun StatusChip(planStatus: String) {
     Box(
         modifier = Modifier
             .background(

@@ -9,5 +9,6 @@ interface WorkoutTemplateRepository {
         orderIndex: Int
     ): WorkoutTemplate
 
+    suspend fun getWorkoutById(workoutId: String): WorkoutTemplate
     suspend fun deleteWorkoutTemplateById(workoutId: String)
 }

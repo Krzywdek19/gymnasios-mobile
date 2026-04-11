@@ -4,9 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.krzywdek19.gymnasiosmobile.presentation.exercisetemplate.create.CreateExerciseTemplateScreen
 import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.create.CreateTrainingPlanScreen
 import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.details.TrainingPlanDetailsScreen
 import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.list.TrainingPlanScreen
+import com.krzywdek19.gymnasiosmobile.presentation.workouttemplate.details.WorkoutTemplateDetailsScreen
 
 @Composable
 fun AppNavigation() {
@@ -31,7 +33,8 @@ fun AppNavigation() {
             val planId = backStackEntry.arguments?.getString("planId") ?: ""
             TrainingPlanDetailsScreen(
                 planId = planId,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onWorkoutClick = {workoutId -> navController.navigate(Screen.WorkoutTemplateDetails.createRoute(workoutId))}
             )
         }
 
@@ -39,6 +42,33 @@ fun AppNavigation() {
             CreateTrainingPlanScreen(
                 onBack = { navController.popBackStack() },
                 onSave = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.WorkoutTemplateDetails.route) { backStackEntry ->
+            val workoutId = backStackEntry.arguments?.getString("workoutId") ?: ""
+            WorkoutTemplateDetailsScreen(
+                workoutId = workoutId,
+                onBack = { navController.popBackStack() },
+                onAddExerciseClick = { selectedWorkoutId ->
+                    navController.navigate(Screen.CreateExerciseTemplate.createRoute(selectedWorkoutId))
+                }
+            )
+        }
+
+        composable(Screen.CreateExerciseTemplate.route) { backStackEntry ->
+            val workoutTemplateId = backStackEntry.arguments?.getString("workoutTemplateId") ?: ""
+
+            CreateExerciseTemplateScreen(
+                workoutTemplateId = workoutTemplateId,
+                onBack = { navController.popBackStack() },
+                onSaved = {
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("exercise_created", true)
+
+                    navController.popBackStack()
+                }
             )
         }
     }
