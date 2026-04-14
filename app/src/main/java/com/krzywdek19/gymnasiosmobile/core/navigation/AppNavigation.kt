@@ -49,9 +49,10 @@ fun AppNavigation() {
             val workoutId = backStackEntry.arguments?.getString("workoutId") ?: ""
             WorkoutTemplateDetailsScreen(
                 workoutId = workoutId,
+                backStackEntry = backStackEntry,
                 onBack = { navController.popBackStack() },
-                onAddExerciseClick = { selectedWorkoutId ->
-                    navController.navigate(Screen.CreateExerciseTemplate.createRoute(selectedWorkoutId))
+                onAddExerciseClick = { templateId ->
+                    navController.navigate(Screen.CreateExerciseTemplate.createRoute(templateId))
                 }
             )
         }

@@ -21,6 +21,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import com.krzywdek19.gymnasiosmobile.R
 import com.krzywdek19.gymnasiosmobile.di.AppContainer
 import com.krzywdek19.gymnasiosmobile.domain.model.ExerciseTemplate
@@ -37,7 +39,8 @@ import com.krzywdek19.gymnasiosmobile.domain.model.ExerciseTemplate
 fun WorkoutTemplateDetailsScreen(
     workoutId: String,
     onBack: () -> Unit,
-    onAddExerciseClick: (String) -> Unit
+    onAddExerciseClick: (String) -> Unit,
+    backStackEntry: NavBackStackEntry
 ) {
     val viewModel: WorkoutTemplateDetailsViewModel = viewModel(
         factory = WorkoutTemplateDetailsViewModelFactory(
@@ -48,6 +51,17 @@ fun WorkoutTemplateDetailsScreen(
     )
 
     val uiState by viewModel.uiState.collectAsState()
+
+    val exerciseCreated by backStackEntry.savedStateHandle
+        .getStateFlow("exercise_created", false)
+        .collectAsState()
+
+    LaunchedEffect(exerciseCreated) {
+        if (exerciseCreated) {
+            viewModel.loadData()
+            backStackEntry.savedStateHandle["exercise_created"] = false
+        }
+    }
 
     Scaffold(
         topBar = {
