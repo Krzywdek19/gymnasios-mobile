@@ -4,6 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.krzywdek19.gymnasiosmobile.presentation.auth.login.LoginScreen
+import com.krzywdek19.gymnasiosmobile.presentation.auth.login.LoginViewModel
+import com.krzywdek19.gymnasiosmobile.presentation.auth.register.RegisterScreen
+import com.krzywdek19.gymnasiosmobile.presentation.auth.register.RegisterViewModel
 import com.krzywdek19.gymnasiosmobile.presentation.exercisetemplate.create.CreateExerciseTemplateScreen
 import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.create.CreateTrainingPlanScreen
 import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.details.TrainingPlanDetailsScreen
@@ -11,13 +15,48 @@ import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.list.TrainingPla
 import com.krzywdek19.gymnasiosmobile.presentation.workouttemplate.details.WorkoutTemplateDetailsScreen
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(
+    isLoggedIn: Boolean,
+    loginViewModel: LoginViewModel,
+    registerViewModel: RegisterViewModel
+) {
     val navController = rememberNavController()
+    val startDestination = if (isLoggedIn) {
+        Screen.TrainingPlans.route
+    } else {
+        Screen.Login.route
+    }
 
     NavHost(
         navController = navController,
-        startDestination = Screen.TrainingPlans.route
+        startDestination = startDestination
     ) {
+        composable(Screen.Login.route) {
+            LoginScreen(
+                viewModel = loginViewModel,
+                onLoginSuccess = {
+                    navController.navigate(Screen.TrainingPlans.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                },
+                onGoToRegister = {
+                    navController.navigate(Screen.Register.route)
+                }
+            )
+        }
+
+        composable(Screen.Register.route) {
+            RegisterScreen(
+                viewModel = registerViewModel,
+                onRegisterSuccess = {
+                    navController.popBackStack()
+                },
+                onGoToLogin = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
         composable(Screen.TrainingPlans.route) {
             TrainingPlanScreen(
                 onPlanClick = { planId ->
@@ -34,7 +73,9 @@ fun AppNavigation() {
             TrainingPlanDetailsScreen(
                 planId = planId,
                 onBack = { navController.popBackStack() },
-                onWorkoutClick = {workoutId -> navController.navigate(Screen.WorkoutTemplateDetails.createRoute(workoutId))}
+                onWorkoutClick = { workoutId ->
+                    navController.navigate(Screen.WorkoutTemplateDetails.createRoute(workoutId))
+                }
             )
         }
 
