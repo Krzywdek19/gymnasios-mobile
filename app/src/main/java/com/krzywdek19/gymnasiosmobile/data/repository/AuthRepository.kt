@@ -3,6 +3,7 @@ package com.krzywdek19.gymnasiosmobile.data.repository
 import com.krzywdek19.gymnasiosmobile.data.local.TokenStorage
 import com.krzywdek19.gymnasiosmobile.data.remote.auth.AuthApi
 import com.krzywdek19.gymnasiosmobile.data.remote.auth.LoginRequestDto
+import com.krzywdek19.gymnasiosmobile.data.remote.auth.RefreshTokenRequestDto
 import com.krzywdek19.gymnasiosmobile.data.remote.auth.RegisterRequestDto
 
 class AuthRepository(
@@ -28,6 +29,27 @@ class AuthRepository(
                 expiresIn = response.expiresIn
             )
             Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun refreshToken(): Result<String> {
+        val refreshToken = tokenStorage.getRefreshToken()
+            ?: return Result.failure(IllegalStateException("Brak refresh tokenu"))
+
+        return try {
+            val response = authApi.refreshToken(
+                RefreshTokenRequestDto(refreshToken)
+            )
+
+            tokenStorage.saveTokens(
+                accessToken = response.accessToken,
+                refreshToken = response.refreshToken,
+                expiresIn = response.expiresIn
+            )
+
+            Result.success(response.accessToken)
         } catch (e: Exception) {
             Result.failure(e)
         }

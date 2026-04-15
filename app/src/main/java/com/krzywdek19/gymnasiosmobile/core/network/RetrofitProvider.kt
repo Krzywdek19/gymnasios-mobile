@@ -6,15 +6,24 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitProvider {
+
     private lateinit var tokenStorage: TokenStorage
 
     fun init(tokenStorage: TokenStorage) {
         this.tokenStorage = tokenStorage
     }
 
+    private val plainRetrofit: Retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl(NetworkConfig.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
     private val okHttpClient: OkHttpClient by lazy {
         OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor(tokenStorage))
+            .authenticator(TokenAuthenticator(tokenStorage, plainRetrofit))
             .build()
     }
 

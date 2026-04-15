@@ -1,5 +1,6 @@
 package com.krzywdek19.gymnasiosmobile.data.remote.auth
 
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
 
@@ -14,4 +15,14 @@ interface AuthApi {
     suspend fun login(
         @Body request: LoginRequestDto
     ): TokenResponseDto
+
+    @POST("api/v1/auth/refresh")
+    suspend fun refreshToken(
+        @Body request: RefreshTokenRequestDto
+    ): TokenResponseDto
+
+    @POST("api/v1/auth/refresh")
+    fun refreshTokenCall(
+        @Body request: RefreshTokenRequestDto
+    ): Call<TokenResponseDto>
 }
