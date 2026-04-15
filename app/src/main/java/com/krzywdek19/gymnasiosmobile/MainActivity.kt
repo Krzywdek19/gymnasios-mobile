@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.krzywdek19.gymnasiosmobile.core.navigation.AppNavigation
 import com.krzywdek19.gymnasiosmobile.core.network.ApiFactory
+import com.krzywdek19.gymnasiosmobile.core.network.RetrofitProvider
 import com.krzywdek19.gymnasiosmobile.core.ui.theme.GymnasiosMobileTheme
 import com.krzywdek19.gymnasiosmobile.data.local.TokenStorage
 import com.krzywdek19.gymnasiosmobile.data.repository.AuthRepository
@@ -36,7 +37,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
+        RetrofitProvider.init(tokenStorage)
         setContent {
             GymnasiosMobileTheme {
                 AppNavigation(
