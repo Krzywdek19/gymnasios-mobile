@@ -29,11 +29,6 @@ fun TrainingPlanScreen(onPlanClick: (String) -> Unit, onAddClick: () -> Unit, vi
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.training_plans_title)) }
-            )
-        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddClick

@@ -43,7 +43,8 @@ class MainActivity : ComponentActivity() {
                 AppNavigation(
                     isLoggedIn = tokenStorage.isLoggedIn(),
                     loginViewModel = loginViewModel,
-                    registerViewModel = registerViewModel
+                    registerViewModel = registerViewModel,
+                    authRepository = authRepository
                 )
             }
         }
