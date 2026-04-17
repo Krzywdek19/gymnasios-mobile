@@ -21,6 +21,10 @@
     <string name="add_first_workout_hint">Dodaj pierwszy trening, aby zacząć budować plan.</string>
     <string name="delete_workout">Usuń trening</string>
     <string name="workout_order">Trening #%1$d</string>
+    <string name="edit_workout">Edytuj trening</string>
+    <string name="rename_workout_title">Zmień nazwę treningu</string>
+    <string name="rename_workout_confirm">Zapisz zmiany</string>
+    <string name="rename_workout_label">Nowa nazwa treningu</string>
 
 
     <string name="workout_details_title_fallback">Szczegóły treningu</string>

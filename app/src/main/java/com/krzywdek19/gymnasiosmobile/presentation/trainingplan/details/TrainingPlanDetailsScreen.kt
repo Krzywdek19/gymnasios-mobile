@@ -64,6 +64,9 @@ fun TrainingPlanDetailsScreen(
     val uiState by viewModel.uiState.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
     var workoutName by remember { mutableStateOf("") }
+    var showRenameDialog by remember { mutableStateOf(false) }
+    var editedWorkoutId by remember { mutableStateOf<String?>(null) }
+    var editedWorkoutName by remember { mutableStateOf("") }
 
     LaunchedEffect(planId) {
         viewModel.loadPlan(planId)
@@ -191,6 +194,11 @@ fun TrainingPlanDetailsScreen(
                                 NextWorkoutCard(
                                     workout = workout,
                                     onClick = onWorkoutClick,
+                                    onEdit = { selectedWorkout ->
+                                        editedWorkoutId = selectedWorkout.id
+                                        editedWorkoutName = selectedWorkout.name
+                                        showRenameDialog = true
+                                    },
                                     onDelete = { workoutId ->
                                         viewModel.deleteWorkout(workoutId)
                                     }
@@ -216,6 +224,11 @@ fun TrainingPlanDetailsScreen(
                                 WorkoutCard(
                                     workout = workout,
                                     onClick = onWorkoutClick,
+                                    onEdit = { selectedWorkout ->
+                                        editedWorkoutId = selectedWorkout.id
+                                        editedWorkoutName = selectedWorkout.name
+                                        showRenameDialog = true
+                                    },
                                     onDelete = { workoutId ->
                                         viewModel.deleteWorkout(workoutId)
                                     }
@@ -270,7 +283,61 @@ fun TrainingPlanDetailsScreen(
                         }
                     )
                 }
+                if (showRenameDialog) {
+                    AlertDialog(
+                        onDismissRequest = {
+                            showRenameDialog = false
+                            editedWorkoutId = null
+                            editedWorkoutName = ""
+                        },
+                        title = {
+                            Text(stringResource(R.string.rename_workout_title))
+                        },
+                        text = {
+                            OutlinedTextField(
+                                value = editedWorkoutName,
+                                onValueChange = { editedWorkoutName = it },
+                                label = { Text(stringResource(R.string.rename_workout_label)) },
+                                singleLine = true,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        },
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    val workoutId = editedWorkoutId
+                                    val trimmedName = editedWorkoutName.trim()
+
+                                    if (workoutId != null && trimmedName.isNotEmpty()) {
+                                        viewModel.renameWorkout(
+                                            workoutId = workoutId,
+                                            newName = trimmedName
+                                        )
+                                        showRenameDialog = false
+                                        editedWorkoutId = null
+                                        editedWorkoutName = ""
+                                    }
+                                },
+                                enabled = editedWorkoutName.trim().isNotEmpty()
+                            ) {
+                                Text(stringResource(R.string.rename_workout_confirm))
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(
+                                onClick = {
+                                    showRenameDialog = false
+                                    editedWorkoutId = null
+                                    editedWorkoutName = ""
+                                }
+                            ) {
+                                Text(stringResource(R.string.cancel))
+                            }
+                        }
+                    )
+                }
             }
+
 
             is TrainingPlanDetailsUiState.Error -> {
                 Box(

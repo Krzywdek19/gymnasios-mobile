@@ -58,6 +58,27 @@ class TrainingPlanDetailsViewModel(
         }
     }
 
+    fun renameWorkout(workoutId: String, newName: String) {
+        val currentState = _uiState.value
+        if (currentState !is TrainingPlanDetailsUiState.Success) return
+
+        val planId = currentState.plan.id
+
+        viewModelScope.launch {
+            try {
+                workoutTemplateRepository.updateWorkoutTemplate(
+                    workoutId = workoutId,
+                    name = newName
+                )
+                loadPlan(planId)
+            } catch (e: Exception) {
+                _uiState.value = TrainingPlanDetailsUiState.Error(
+                    R.string.error_generic
+                )
+            }
+        }
+    }
+
     fun deleteWorkout(workoutId: String) {
         val currentState = _uiState.value
         if (currentState !is TrainingPlanDetailsUiState.Success) return

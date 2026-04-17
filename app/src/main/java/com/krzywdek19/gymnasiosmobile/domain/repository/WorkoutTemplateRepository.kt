@@ -10,5 +10,9 @@ interface WorkoutTemplateRepository {
     ): WorkoutTemplate
 
     suspend fun getWorkoutById(workoutId: String): WorkoutTemplate
+    suspend fun updateWorkoutTemplate(
+        workoutId: String,
+        name: String
+    ): WorkoutTemplate
     suspend fun deleteWorkoutTemplateById(workoutId: String)
 }
