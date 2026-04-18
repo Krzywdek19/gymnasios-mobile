@@ -9,6 +9,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -29,7 +31,9 @@ fun WorkoutCard(
     workout: WorkoutTemplate,
     onClick: (String) -> Unit,
     onEdit: (WorkoutTemplate) -> Unit,
-    onDelete: (String) -> Unit
+    onDelete: (String) -> Unit,
+    onMoveUp: (() -> Unit)?,
+    onMoveDown: (() -> Unit)?
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -45,6 +49,7 @@ fun WorkoutCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
+                modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
@@ -63,6 +68,24 @@ fun WorkoutCard(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                if (onMoveUp != null) {
+                    IconButton(onClick = onMoveUp) {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowUp,
+                            contentDescription = stringResource(R.string.move_workout_up)
+                        )
+                    }
+                }
+
+                if (onMoveDown != null) {
+                    IconButton(onClick = onMoveDown) {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            contentDescription = stringResource(R.string.move_workout_down)
+                        )
+                    }
+                }
+
                 IconButton(
                     onClick = { onEdit(workout) }
                 ) {

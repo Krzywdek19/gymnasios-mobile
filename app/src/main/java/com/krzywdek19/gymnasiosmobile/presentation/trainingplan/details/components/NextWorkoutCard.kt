@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -29,7 +30,8 @@ fun NextWorkoutCard(
     workout: WorkoutTemplate,
     onClick: (String) -> Unit,
     onEdit: (WorkoutTemplate) -> Unit,
-    onDelete: (String) -> Unit
+    onDelete: (String) -> Unit,
+    onMoveDown: (() -> Unit)?
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -58,6 +60,15 @@ fun NextWorkoutCard(
                 )
 
                 Row {
+                    if (onMoveDown != null) {
+                        IconButton(onClick = onMoveDown) {
+                            Icon(
+                                imageVector = Icons.Default.KeyboardArrowDown,
+                                contentDescription = stringResource(R.string.move_workout_down)
+                            )
+                        }
+                    }
+
                     IconButton(
                         onClick = { onEdit(workout) }
                     ) {

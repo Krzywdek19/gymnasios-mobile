@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -201,6 +202,11 @@ fun TrainingPlanDetailsScreen(
                                     },
                                     onDelete = { workoutId ->
                                         viewModel.deleteWorkout(workoutId)
+                                    },
+                                    onMoveDown = if (sortedWorkouts.size > 1) {
+                                        { viewModel.moveWorkoutDown(workout.id) }
+                                    } else {
+                                        null
                                     }
                                 )
                             }
@@ -220,7 +226,10 @@ fun TrainingPlanDetailsScreen(
                                 }
                             }
 
-                            items(remainingWorkouts) { workout ->
+                            itemsIndexed(remainingWorkouts) { index, workout ->
+                                val absoluteIndex = index + 1
+                                val isLastWorkout = absoluteIndex == sortedWorkouts.lastIndex
+
                                 WorkoutCard(
                                     workout = workout,
                                     onClick = onWorkoutClick,
@@ -231,6 +240,14 @@ fun TrainingPlanDetailsScreen(
                                     },
                                     onDelete = { workoutId ->
                                         viewModel.deleteWorkout(workoutId)
+                                    },
+                                    onMoveUp = {
+                                        viewModel.moveWorkoutUp(workout.id)
+                                    },
+                                    onMoveDown = if (!isLastWorkout) {
+                                        { viewModel.moveWorkoutDown(workout.id) }
+                                    } else {
+                                        null
                                     }
                                 )
                             }

@@ -25,6 +25,8 @@
     <string name="rename_workout_title">Change training name</string>
     <string name="rename_workout_confirm">Save changes</string>
     <string name="rename_workout_label">New training name</string>
+    <string name="move_workout_up">Move workout up</string>
+    <string name="move_workout_down">Move workout down</string>
 
     <string name="workout_details_title_fallback">Workout Details</string>
     <string name="add_exercise">Add Exercise</string>

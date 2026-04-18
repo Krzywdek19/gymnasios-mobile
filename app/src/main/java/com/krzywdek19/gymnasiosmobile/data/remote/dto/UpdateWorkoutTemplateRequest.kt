@@ -4,5 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class UpdateWorkoutTemplateRequest(
     @SerializedName("name")
-    val name: String
+    val name: String,
+    @SerializedName("order")
+    val order: Int
 )

@@ -33,11 +33,15 @@ class WorkoutTemplateRepositoryImpl(
 
     override suspend fun updateWorkoutTemplate(
         workoutId: String,
-        name: String
+        name: String,
+        order: Int
     ): WorkoutTemplate {
         return api.updateWorkoutTemplate(
             workoutTemplateId = workoutId,
-            request = UpdateWorkoutTemplateRequest(name = name)
+            request = UpdateWorkoutTemplateRequest(
+                name = name.trim(),
+                order = order
+            )
         ).toDomain()
     }
 
