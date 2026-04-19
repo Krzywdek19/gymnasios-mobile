@@ -28,7 +28,9 @@ class WorkoutTemplateDetailsViewModel(
 
             try {
                 val workout = workoutTemplateRepository.getWorkoutById(workoutId)
-                val exercises = exerciseTemplateRepository.getExercisesByWorkout(workoutId)
+                val exercises = exerciseTemplateRepository
+                    .getExercisesByWorkout(workoutId)
+                    .sortedBy { it.orderIndex }
 
                 _uiState.value = WorkoutTemplateDetailsUiState(
                     isLoading = false,
@@ -38,6 +40,34 @@ class WorkoutTemplateDetailsViewModel(
             } catch (e: Exception) {
                 _uiState.value = WorkoutTemplateDetailsUiState(
                     isLoading = false,
+                    errorMessage = e.message ?: "Unknown error"
+                )
+            }
+        }
+    }
+
+    fun reorderExercise(
+        exerciseId: String,
+        newOrder: Int
+    ) {
+        val currentState = _uiState.value
+        val exercise = currentState.exercises.firstOrNull { it.id == exerciseId } ?: return
+
+        if (exercise.orderIndex == newOrder) return
+
+        viewModelScope.launch {
+            try {
+                exerciseTemplateRepository.updateExercise(
+                    id = exercise.id,
+                    name = exercise.name,
+                    setsCount = exercise.setsCount,
+                    reps = exercise.reps,
+                    orderIndex = newOrder,
+                    notes = exercise.notes ?: ""
+                )
+                loadData()
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
                     errorMessage = e.message ?: "Unknown error"
                 )
             }
