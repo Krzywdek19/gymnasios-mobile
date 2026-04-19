@@ -21,8 +21,17 @@ class TrainingPlanDetailsViewModel(
     val uiState: StateFlow<TrainingPlanDetailsUiState> = _uiState
 
     fun loadPlan(id: String) {
+        refreshPlan(id, showLoading = true)
+    }
+
+    private fun refreshPlan(
+        id: String,
+        showLoading: Boolean
+    ) {
         viewModelScope.launch {
-            _uiState.value = TrainingPlanDetailsUiState.Loading
+            if (showLoading) {
+                _uiState.value = TrainingPlanDetailsUiState.Loading
+            }
 
             try {
                 val plan = repository.getTrainingPlanById(id)
@@ -49,7 +58,7 @@ class TrainingPlanDetailsViewModel(
                     name = name,
                     orderIndex = nextOrderIndex
                 )
-                loadPlan(plan.id)
+                refreshPlan(plan.id, showLoading = false)
             } catch (e: Exception) {
                 _uiState.value = TrainingPlanDetailsUiState.Error(
                     R.string.error_generic
@@ -72,7 +81,7 @@ class TrainingPlanDetailsViewModel(
                     name = newName,
                     order = workout.orderIndex
                 )
-                loadPlan(plan.id)
+                refreshPlan(plan.id, showLoading = false)
             } catch (e: Exception) {
                 _uiState.value = TrainingPlanDetailsUiState.Error(
                     R.string.error_generic
@@ -81,24 +90,17 @@ class TrainingPlanDetailsViewModel(
         }
     }
 
-    fun moveWorkoutUp(workoutId: String) {
-        moveWorkout(workoutId, -1)
-    }
-
-    fun moveWorkoutDown(workoutId: String) {
-        moveWorkout(workoutId, 1)
-    }
-
-    private fun moveWorkout(workoutId: String, delta: Int) {
+    fun reorderWorkout(
+        workoutId: String,
+        newOrder: Int
+    ) {
         val currentState = _uiState.value
         if (currentState !is TrainingPlanDetailsUiState.Success) return
 
         val plan = currentState.plan
-        val sortedWorkouts = plan.workouts.sortedBy { it.orderIndex }
-        val workout = sortedWorkouts.firstOrNull { it.id == workoutId } ?: return
+        val workout = plan.workouts.firstOrNull { it.id == workoutId } ?: return
 
-        val newOrder = workout.orderIndex + delta
-        if (newOrder < 1 || newOrder > sortedWorkouts.size) return
+        if (workout.orderIndex == newOrder) return
 
         viewModelScope.launch {
             try {
@@ -107,7 +109,7 @@ class TrainingPlanDetailsViewModel(
                     name = workout.name,
                     order = newOrder
                 )
-                loadPlan(plan.id)
+                refreshPlan(plan.id, showLoading = false)
             } catch (e: Exception) {
                 _uiState.value = TrainingPlanDetailsUiState.Error(
                     R.string.error_generic
@@ -125,8 +127,8 @@ class TrainingPlanDetailsViewModel(
         viewModelScope.launch {
             try {
                 workoutTemplateRepository.deleteWorkoutTemplateById(workoutId)
-                loadPlan(planId)
-            }catch (e: Exception) {
+                refreshPlan(planId, showLoading = false)
+            } catch (e: Exception) {
                 _uiState.value = TrainingPlanDetailsUiState.Error(
                     R.string.error_generic
                 )

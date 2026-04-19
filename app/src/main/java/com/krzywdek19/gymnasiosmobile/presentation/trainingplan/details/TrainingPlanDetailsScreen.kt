@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -37,8 +37,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,8 +49,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.krzywdek19.gymnasiosmobile.R
-import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.details.components.NextWorkoutCard
 import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.details.components.WorkoutCard
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
+
+private data class PendingWorkoutReorder(
+    val workoutId: String,
+    val newOrder: Int
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -159,16 +165,62 @@ fun TrainingPlanDetailsScreen(
                 }
             }
 
+            is TrainingPlanDetailsUiState.Error -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = stringResource(state.messageRes))
+                }
+            }
+
             is TrainingPlanDetailsUiState.Success -> {
                 val plan = state.plan
-                val sortedWorkouts = plan.workouts.sortedBy { it.orderIndex }
-                val nextWorkout = sortedWorkouts.firstOrNull()
-                val remainingWorkouts = sortedWorkouts.drop(1)
+                val initialWorkouts = remember(plan.id, plan.workouts) {
+                    plan.workouts.sortedBy { it.orderIndex }
+                }
+
+                var reorderedWorkouts by remember(plan.id, plan.workouts) {
+                    mutableStateOf(initialWorkouts)
+                }
+
+                var pendingReorder by remember(plan.id, plan.workouts) {
+                    mutableStateOf<PendingWorkoutReorder?>(null)
+                }
+
+                val lazyListState = rememberLazyListState()
+                val listStartOffset = 1
+
+                val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
+                    val fromIndex = from.index - listStartOffset
+                    val toIndex = to.index - listStartOffset
+
+                    if (fromIndex == toIndex) return@rememberReorderableLazyListState
+
+                    if (fromIndex !in reorderedWorkouts.indices) return@rememberReorderableLazyListState
+                    if (toIndex !in 0..reorderedWorkouts.size) return@rememberReorderableLazyListState
+
+                    reorderedWorkouts = reorderedWorkouts.toMutableList().apply {
+                        val movedItem = removeAt(fromIndex)
+                        add(toIndex.coerceAtMost(size), movedItem)
+                    }
+
+                    val finalIndex = toIndex.coerceIn(0, reorderedWorkouts.lastIndex)
+                    val movedWorkout = reorderedWorkouts[finalIndex]
+
+                    pendingReorder = PendingWorkoutReorder(
+                        workoutId = movedWorkout.id,
+                        newOrder = finalIndex + 1
+                    )
+                }
 
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding),
+                    state = lazyListState,
                     contentPadding = PaddingValues(
                         start = 16.dp,
                         end = 16.dp,
@@ -177,61 +229,51 @@ fun TrainingPlanDetailsScreen(
                     ),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    if (sortedWorkouts.isEmpty()) {
+                    if (reorderedWorkouts.isEmpty()) {
                         item {
                             EmptyWorkoutsCard()
                         }
                     } else {
-                        nextWorkout?.let { workout ->
-                            item {
-                                Text(
-                                    text = stringResource(R.string.next_workout_label),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
-
-                            item {
-                                NextWorkoutCard(
-                                    workout = workout,
-                                    onClick = onWorkoutClick,
-                                    onEdit = { selectedWorkout ->
-                                        editedWorkoutId = selectedWorkout.id
-                                        editedWorkoutName = selectedWorkout.name
-                                        showRenameDialog = true
-                                    },
-                                    onDelete = { workoutId ->
-                                        viewModel.deleteWorkout(workoutId)
-                                    },
-                                    onMoveDown = if (sortedWorkouts.size > 1) {
-                                        { viewModel.moveWorkoutDown(workout.id) }
-                                    } else {
-                                        null
-                                    }
-                                )
-                            }
+                        item {
+                            Text(
+                                text = stringResource(R.string.other_workouts),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            HorizontalDivider(modifier = Modifier.padding(top = 8.dp))
                         }
 
-                        if (remainingWorkouts.isNotEmpty()) {
-                            item {
-                                Column(
-                                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.other_workouts),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                    HorizontalDivider()
-                                }
-                            }
+                        items(
+                            items = reorderedWorkouts,
+                            key = { it.id }
+                        ) { workout ->
+                            ReorderableItem(
+                                state = reorderableLazyListState,
+                                key = workout.id
+                            ) { isDragging ->
 
-                            itemsIndexed(remainingWorkouts) { index, workout ->
-                                val absoluteIndex = index + 1
-                                val isLastWorkout = absoluteIndex == sortedWorkouts.lastIndex
+                                val currentIndex = reorderedWorkouts.indexOfFirst { it.id == workout.id }
+                                val displayOrder = currentIndex + 1
+                                val isNextWorkout = currentIndex == 0
 
                                 WorkoutCard(
                                     workout = workout,
+                                    displayOrder = displayOrder,
+                                    isNextWorkout = isNextWorkout,
+                                    isDragging = isDragging,
+                                    modifier = with(this) {
+                                        Modifier.longPressDraggableHandle(
+                                            onDragStopped = {
+                                                pendingReorder?.let { pending ->
+                                                    viewModel.reorderWorkout(
+                                                        workoutId = pending.workoutId,
+                                                        newOrder = pending.newOrder
+                                                    )
+                                                }
+                                                pendingReorder = null
+                                            }
+                                        )
+                                    },
                                     onClick = onWorkoutClick,
                                     onEdit = { selectedWorkout ->
                                         editedWorkoutId = selectedWorkout.id
@@ -240,14 +282,6 @@ fun TrainingPlanDetailsScreen(
                                     },
                                     onDelete = { workoutId ->
                                         viewModel.deleteWorkout(workoutId)
-                                    },
-                                    onMoveUp = {
-                                        viewModel.moveWorkoutUp(workout.id)
-                                    },
-                                    onMoveDown = if (!isLastWorkout) {
-                                        { viewModel.moveWorkoutDown(workout.id) }
-                                    } else {
-                                        null
                                     }
                                 )
                             }
@@ -300,6 +334,7 @@ fun TrainingPlanDetailsScreen(
                         }
                     )
                 }
+
                 if (showRenameDialog) {
                     AlertDialog(
                         onDismissRequest = {
@@ -337,7 +372,7 @@ fun TrainingPlanDetailsScreen(
                                 },
                                 enabled = editedWorkoutName.trim().isNotEmpty()
                             ) {
-                                Text(stringResource(R.string.rename_workout_confirm))
+                                Text(stringResource(R.string.save))
                             }
                         },
                         dismissButton = {
@@ -352,18 +387,6 @@ fun TrainingPlanDetailsScreen(
                             }
                         }
                     )
-                }
-            }
-
-
-            is TrainingPlanDetailsUiState.Error -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = stringResource(state.messageRes))
                 }
             }
         }

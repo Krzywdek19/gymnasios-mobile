@@ -40,6 +40,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.reorderable)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
