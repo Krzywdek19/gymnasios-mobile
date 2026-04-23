@@ -28,54 +28,27 @@ class CreateExerciseTemplateViewModel(
     val uiState: StateFlow<CreateExerciseTemplateUiState> = _uiState.asStateFlow()
 
     fun onNameChange(value: String) {
-        _uiState.value = _uiState.value.copy(
-            name = value,
-            errorMessageRes = null
-        )
+        updateForm(name = value)
     }
 
     fun onSetsCountChange(value: String) {
-        _uiState.value = _uiState.value.copy(
-            setsCount = value,
-            errorMessageRes = null
-        )
+        updateForm(setsCount = value)
     }
 
     fun onRepsChange(value: String) {
-        _uiState.value = _uiState.value.copy(
-            reps = value,
-            errorMessageRes = null
-        )
+        updateForm(reps = value)
     }
 
     fun onNotesChange(value: String) {
-        _uiState.value = _uiState.value.copy(
-            notes = value,
-            errorMessageRes = null
-        )
+        updateForm(notes = value)
     }
 
     fun saveExercise(orderIndex: Int) {
-        val current = _uiState.value
-        val sets = current.setsCount.toIntOrNull()
-
-        if (current.name.isBlank()) {
-            _uiState.value = current.copy(errorMessageRes = R.string.error_exercise_name_required)
-            return
-        }
-
-        if (sets == null || sets <= 0) {
-            _uiState.value = current.copy(errorMessageRes = R.string.error_sets_count_invalid)
-            return
-        }
-
-        if (current.reps.isBlank()) {
-            _uiState.value = current.copy(errorMessageRes = R.string.error_reps_required)
-            return
-        }
+        val currentState = _uiState.value
+        val validatedInput = validateInput(currentState) ?: return
 
         viewModelScope.launch {
-            _uiState.value = current.copy(
+            _uiState.value = currentState.copy(
                 isSaving = true,
                 errorMessageRes = null
             )
@@ -83,18 +56,19 @@ class CreateExerciseTemplateViewModel(
             try {
                 exerciseTemplateRepository.createExercise(
                     workoutTemplateId = workoutTemplateId,
-                    name = current.name.trim(),
-                    setsCount = sets,
-                    reps = current.reps.trim(),
+                    name = validatedInput.name,
+                    setsCount = validatedInput.setsCount,
+                    reps = validatedInput.reps,
                     orderIndex = orderIndex,
-                    notes = current.notes.trim().ifBlank { null }
+                    notes = validatedInput.notes
                 )
 
                 _uiState.value = _uiState.value.copy(
                     isSaving = false,
-                    savedSuccessfully = true
+                    savedSuccessfully = true,
+                    errorMessageRes = null
                 )
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isSaving = false,
                     errorMessageRes = R.string.error_saving_exercise
@@ -107,5 +81,56 @@ class CreateExerciseTemplateViewModel(
         _uiState.value = _uiState.value.copy(savedSuccessfully = false)
     }
 
+    private fun updateForm(
+        name: String = _uiState.value.name,
+        setsCount: String = _uiState.value.setsCount,
+        reps: String = _uiState.value.reps,
+        notes: String = _uiState.value.notes
+    ) {
+        _uiState.value = _uiState.value.copy(
+            name = name,
+            setsCount = setsCount,
+            reps = reps,
+            notes = notes,
+            errorMessageRes = null
+        )
+    }
 
+    private fun validateInput(state: CreateExerciseTemplateUiState): ValidatedExerciseInput? {
+        val name = state.name.trim()
+        val reps = state.reps.trim()
+        val notes = state.notes.trim().ifBlank { null }
+        val setsCount = state.setsCount.trim().toIntOrNull()
+
+        when {
+            name.isBlank() -> {
+                _uiState.value = state.copy(errorMessageRes = R.string.error_exercise_name_required)
+                return null
+            }
+
+            setsCount == null || setsCount <= 0 -> {
+                _uiState.value = state.copy(errorMessageRes = R.string.error_sets_count_invalid)
+                return null
+            }
+
+            reps.isBlank() -> {
+                _uiState.value = state.copy(errorMessageRes = R.string.error_reps_required)
+                return null
+            }
+        }
+
+        return ValidatedExerciseInput(
+            name = name,
+            setsCount = setsCount,
+            reps = reps,
+            notes = notes
+        )
+    }
+
+    private data class ValidatedExerciseInput(
+        val name: String,
+        val setsCount: Int,
+        val reps: String,
+        val notes: String?
+    )
 }

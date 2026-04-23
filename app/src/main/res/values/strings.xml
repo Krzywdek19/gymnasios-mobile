@@ -1,55 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">GymnasiosMobile</string>
 
-    <string name="back">Wróć</string>
-    <string name="retry">Spróbuj ponownie</string>
+    <string name="app_name">Gymnasios</string>
+
+    <!-- Common -->
+    <string name="email">Email</string>
+    <string name="email_label">Email</string>
+    <string name="password">Hasło</string>
+    <string name="password_label">Hasło</string>
+    <string name="confirm_password">Powtórz hasło</string>
+    <string name="confirm_password_label">Powtórz hasło</string>
+    <string name="name">Nazwa</string>
+    <string name="name_label">Nazwa</string>
+    <string name="status">Status</string>
+    <string name="type">Typ</string>
     <string name="save">Zapisz</string>
-    <string name="error_generic">Wystąpił błąd</string>
-
-    <string name="training_plans_title">Plany treningowe</string>
-    <string name="training_plan_details_title">Szczegóły planu</string>
-    <string name="training_plan_status">Status: %1$s</string>
-    <string name="create_training_plan_title">Dodaj plan treningowy</string>
-
-    <string name="next_workout_label">Następny trening</string>
-    <string name="other_workouts">Pozostałe treningi</string>
-    <string name="new_workout">Nowy trening</string>
-    <string name="workout_name">Nazwa treningu</string>
-    <string name="add">Dodaj</string>
     <string name="cancel">Anuluj</string>
-    <string name="no_workouts_in_plan">Brak treningów w tym planie</string>
-    <string name="add_first_workout_hint">Dodaj pierwszy trening, aby zacząć budować plan.</string>
-    <string name="delete_workout">Usuń trening</string>
-    <string name="workout_order">Trening #%1$d</string>
-    <string name="edit_workout">Edytuj trening</string>
-    <string name="rename_workout_title">Zmień nazwę treningu</string>
-    <string name="rename_workout_confirm">Zapisz zmiany</string>
-    <string name="rename_workout_label">Nowa nazwa treningu</string>
-    <string name="move_workout_up">Przesuń trening wyżej</string>
-    <string name="move_workout_down">Przesuń trening niżej</string>
+    <string name="delete">Usuń</string>
+    <string name="edit">Edytuj</string>
+    <string name="loading">Ładowanie…</string>
+    <string name="retry">Spróbuj ponownie</string>
+    <string name="close">Zamknij</string>
+    <string name="back">Wróć</string>
+    <string name="logout">Wyloguj</string>
+    <string name="logout_description">Wyloguj się</string>
+    <string name="menu">Menu</string>
+
+    <!-- Auth / Login -->
+    <string name="login_title">Logowanie</string>
+    <string name="login_subtitle">Zaloguj się, aby przejść do swoich planów treningowych.</string>
+    <string name="login_button">Zaloguj się</string>
+    <string name="login_action">Zaloguj się</string>
+    <string name="login_go_to_register">Nie masz konta? Zarejestruj się</string>
+    <string name="error_login_fields_required">Uzupełnij adres e-mail i hasło</string>
 
 
-    <string name="workout_details_title_fallback">Szczegóły treningu</string>
-    <string name="add_exercise">Dodaj ćwiczenie</string>
-    <string name="add_exercise_title">Dodaj ćwiczenie</string>
-    <string name="no_exercises_yet">Brak ćwiczeń w tym treningu</string>
-    <string name="exercise_sets_reps_format">%1$d x %2$s</string>
+    <!-- Auth / Register -->
+    <string name="register_badge">Nowe konto</string>
+    <string name="register_title">Dołącz do Gymnasios</string>
+    <string name="register_subtitle">Załóż konto, aby zacząć korzystać z aplikacji.</string>
+    <string name="register_subittle">Załóż konto, aby zacząć korzystać z aplikacji.</string>
+    <string name="register_button">Załóż konto</string>
+    <string name="register_action">Załóż konto</string>
+    <string name="register_go_to_login">Masz już konto? Zaloguj się</string>
+    <string name="register_success">Konto utworzone. Zweryfikuj adres e-mail i zaloguj się.</string>
+    <string name="error_register_fields_required">Uzupełnij wszystkie pola</string>
+    <string name="error_register_password_mismatch">Hasła nie są takie same</string>
 
-    <string name="exercise_name_label">Nazwa ćwiczenia</string>
-    <string name="sets_count_label">Liczba serii</string>
+    <!-- Errors / validation -->
+    <string name="error_generic">Wystąpił błąd</string>
+    <string name="error_login_failed">Logowanie nie powiodło się</string>
+    <string name="error_register_failed">Nie udało się utworzyć konta</string>
+    <string name="error_passwords_do_not_match">Hasła nie są takie same</string>
+    <string name="error_email_required">Podaj adres e-mail</string>
+    <string name="error_password_required">Podaj hasło</string>
+    <string name="error_confirm_password_required">Powtórz hasło</string>
+    <string name="error_name_required">Podaj nazwę</string>
+    <string name="error_invalid_email">Podaj poprawny adres e-mail</string>
+
+    <!-- Training plans list -->
+    <string name="training_plans_header">Twoje plany</string>
+    <string name="training_plans_subtitle">Zarządzaj swoimi planami treningowymi</string>
+    <string name="tranining_plans_summary_badge">Podsumowanie</string>
+    <string name="training_plans_summary_badge">Podsumowanie</string>
+    <string name="training_plans_summary_title">Masz %1$d planów gotowych do działania.</string>
+    <string name="training_plans_summary_description">Wybierz plan i przejdź do workoutów.</string>
+    <string name="training_plans_total">Plany</string>
+    <string name="traninig_workouts_total">Workouts</string>
+    <string name="training_workouts_total">Workouts</string>
+    <string name="training_plan_empty_title">Nie masz jeszcze żadnych planów</string>
+    <string name="training_plan_empty_description">Dodaj pierwszy plan treningowy, aby zacząć.</string>
+    <string name="fab_add_plan_description">Dodaj plan treningowy</string>
+
+    <!-- Create training plan -->
+    <string name="create_training_plan_title">Nowy plan treningowy</string>
+    <string name="create_traininig_plan_title">Nowy plan treningowy</string>
+    <string name="create_training_plan_subtitle">Utwórz plan, do którego później dodasz workouty.</string>
+    <string name="create_traininig_plan_subtitle">Utwórz plan, do którego później dodasz workouty.</string>
+    <string name="training_plan_create_hint">Np. Upper / Lower</string>
+    <string name="training_plan_name_label">Nazwa planu</string>
+    <string name="create_training_plan_button">Utwórz plan</string>
+    <string name="create_traininig_plan_button">Utwórz plan</string>
+
+    <!-- Training plan details -->
+    <string name="training_plan_details_title">Plan treningowy</string>
+    <string name="training_plan_details_subtitle">Zarządzaj workoutami i kolejnością</string>
+    <string name="training_plan_status_active">ACTIVE</string>
+    <string name="training_plan_status_ready">Gotowy</string>
+    <string name="workout_count_label">Workouts</string>
+    <string name="next_workout_metric">Następny workout</string>
+    <string name="add_workout_button">Dodaj workout</string>
+    <string name="workouts_list_header">Lista workoutów</string>
+    <string name="next_workout_badge">Najbliższy workout</string>
+    <string name="workout_position">%1$d</string>
+
+    <!-- Workout details -->
+    <string name="workout_badge">Workout</string>
+    <string name="exercise_count_label">Ćwiczenia</string>
+    <string name="workout_type_label">Typ</string>
+    <string name="workout_ready">Gotowy</string>
+    <string name="add_exercise_button">Dodaj ćwiczenie</string>
+    <string name="exercise_list_header">Lista ćwiczeń</string>
+    <string name="exercise_position">Pozycja %1$d</string>
+
+    <!-- Exercise -->
+    <string name="sets_label">Serie</string>
     <string name="reps_label">Powtórzenia</string>
     <string name="notes_label">Notatki</string>
+    <string name="to_failure_label">Ostatnia seria do upadku</string>
+    <string name="exercise_empty_title">Brak ćwiczeń</string>
+    <string name="exercise_empty_description">Dodaj pierwsze ćwiczenie do tego workoutu.</string>
 
+    <!-- Create exercise -->
+    <string name="create_exercise_title">Nowe ćwiczenie</string>
+    <string name="create_exercise_subtitle">Uzupełnij dane ćwiczenia.</string>
+    <string name="exercise_name_label">Nazwa ćwiczenia</string>
+    <string name="exercise_name_hint">Np. Wyciskanie na ławce płaskiej</string>
+    <string name="sets_count_label">Liczba serii</string>
+    <string name="reps_hint">Np. 8</string>
+    <string name="notes_hint">Opcjonalne notatki</string>
+    <string name="create_exercise_button">Dodaj ćwiczenie</string>
+
+    <!-- Content descriptions -->
+    <string name="edit_workout_description">Edytuj workout</string>
+    <string name="delete_workout_description">Usuń workout</string>
+    <string name="like_workout_description">Oznacz workout</string>
+    <string name="edit_exercise_description">Edytuj ćwiczenie</string>
+    <string name="delete_exercise_description">Usuń ćwiczenie</string>
+
+    <string name="no_workouts_in_plan">Brak workoutów w tym planie</string>
+    <string name="add_first_workout_hint">Dodaj pierwszy workout, aby rozpocząć budowę planu.</string>
+    <string name="rename_workout_label">Zmień nazwę workoutu</string>
+    <string name="rename_workout_title">Zmień nazwę workoutu</string>
+    <string name="add">Dodaj</string>
+    <string name="workout_name">Nazwa workoutu</string>
+    <string name="new_workout">Nowy workout</string>
+    <string name="other_workouts">Pozostałe workouty</string>
+    <string name="add_workout">Dodaj workout</string>
+    <string name="edit_workout">Edytuj workout</string>
+    <string name="delete_workout">Usuń workout</string>
+    <string name="workout_order">Kolejność workoutu</string>
+    <string name="move_workout_down">Przesuń workout niżej</string>
+    <string name="next_workout_label">Następny workout</string>
+    <string name="add_exercise_title">Dodaj ćwiczenie</string>
     <string name="error_exercise_name_required">Podaj nazwę ćwiczenia</string>
     <string name="error_sets_count_invalid">Podaj poprawną liczbę serii</string>
     <string name="error_reps_required">Podaj liczbę powtórzeń</string>
     <string name="error_saving_exercise">Nie udało się zapisać ćwiczenia</string>
-
-    <string name="add_workout">Dodaj trening</string>
-    <string name="delete">Usuń</string>
-    <string name="next_workout">Następny trening</string>
-
-    <string name="create_plan_name_label">Nazwa planu</string>
-    <string name="no_workouts_yet">Brak treningów w tym planie</string>
-    <string name="no_plans_yet">Nie masz jeszcze żadnych planów treningowych</string>
+    <string name="training_plans_title">Plany treningowe</string>
+    <string name="error_training_plan_name_required">Podaj nazwę planu treningowego</string>
+    <string name="error_training_plan_create_failed">Nie udało się utworzyć planu treningowego</string>
+    <string name="not_available">Brak</string>
+    <string name="training_plan_status">Status planu</string>
+    <string name="exercise_sets_reps_format">%1$d serie • %2$s powt.</string>
+    <string name="exercise_position_label">Pozycja</string>
+    <string name="no_exercises_yet">Brak ćwiczeń</string>
+    <string name="exercise_list_title">Lista ćwiczeń</string>
+    <string name="add_exercise">Dodaj ćwiczenie</string>
+    <string name="workout_name_metric">Nazwa workoutu</string>
+    <string name="workout_summary_badge">Podsumowanie</string>
+    <string name="workout_details_subtitle">Zarządzaj ćwiczeniami w workoutcie</string>
+    <string name="workout_details_title_fallback">Szczegóły workoutu</string>
+    <string name="error_workout_details_failed">Nie udało się załadować szczegółów workoutu</string>
 </resources>

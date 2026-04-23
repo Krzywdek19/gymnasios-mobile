@@ -1,7 +1,9 @@
 package com.krzywdek19.gymnasiosmobile.presentation.auth.login
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.krzywdek19.gymnasiosmobile.R
 import com.krzywdek19.gymnasiosmobile.data.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +15,7 @@ data class LoginUiState(
     val password: String = "",
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
-    val errorMessage: String? = null
+    @StringRes val errorMessageRes: Int? = null
 )
 
 class LoginViewModel(
@@ -35,12 +37,12 @@ class LoginViewModel(
         val state = _uiState.value
 
         if (state.email.isBlank() || state.password.isBlank()) {
-            _uiState.value = state.copy(errorMessage = "Uzupełnij email i hasło")
+            _uiState.value = state.copy(errorMessageRes = R.string.error_login_fields_required)
             return
         }
 
         viewModelScope.launch {
-            _uiState.value = state.copy(isLoading = true, errorMessage = null)
+            _uiState.value = state.copy(isLoading = true, errorMessageRes = null)
 
             val result = authRepository.login(state.email, state.password)
 
@@ -52,7 +54,7 @@ class LoginViewModel(
             } else {
                 _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "Logowanie nie powiodło się"
+                    errorMessageRes = R.string.error_login_failed
                 )
             }
         }

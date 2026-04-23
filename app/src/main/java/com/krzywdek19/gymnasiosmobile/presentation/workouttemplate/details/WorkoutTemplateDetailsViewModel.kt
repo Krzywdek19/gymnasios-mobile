@@ -2,6 +2,8 @@ package com.krzywdek19.gymnasiosmobile.presentation.workouttemplate.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.krzywdek19.gymnasiosmobile.R
+import com.krzywdek19.gymnasiosmobile.domain.model.ExerciseTemplate
 import com.krzywdek19.gymnasiosmobile.domain.repository.ExerciseTemplateRepository
 import com.krzywdek19.gymnasiosmobile.domain.repository.WorkoutTemplateRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +26,11 @@ class WorkoutTemplateDetailsViewModel(
 
     fun loadData() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            _uiState.value = _uiState.value.copy(
+                isLoading = true,
+                screenErrorMessageRes = null,
+                actionErrorMessageRes = null
+            )
 
             try {
                 val workout = workoutTemplateRepository.getWorkoutById(workoutId)
@@ -37,10 +43,10 @@ class WorkoutTemplateDetailsViewModel(
                     workout = workout,
                     exercises = exercises
                 )
-            } catch (e: Exception) {
-                _uiState.value = WorkoutTemplateDetailsUiState(
+            } catch (_: Exception) {
+                _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = e.message ?: "Unknown error"
+                    screenErrorMessageRes = R.string.error_workout_details_failed
                 )
             }
         }
@@ -51,9 +57,22 @@ class WorkoutTemplateDetailsViewModel(
         newOrder: Int
     ) {
         val currentState = _uiState.value
-        val exercise = currentState.exercises.firstOrNull { it.id == exerciseId } ?: return
+        val currentExercises = currentState.exercises
+        val exercise = currentExercises.firstOrNull { it.id == exerciseId } ?: return
 
         if (exercise.orderIndex == newOrder) return
+        if (newOrder < 1 || newOrder > currentExercises.size) return
+
+        val reorderedExercises = reorderLocally(
+            exercises = currentExercises,
+            exerciseId = exerciseId,
+            newOrder = newOrder
+        )
+
+        _uiState.value = currentState.copy(
+            exercises = reorderedExercises,
+            actionErrorMessageRes = null
+        )
 
         viewModelScope.launch {
             try {
@@ -63,14 +82,35 @@ class WorkoutTemplateDetailsViewModel(
                     setsCount = exercise.setsCount,
                     reps = exercise.reps,
                     orderIndex = newOrder,
-                    notes = exercise.notes ?: ""
+                    notes = exercise.notes
                 )
                 loadData()
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    errorMessage = e.message ?: "Unknown error"
+            } catch (_: Exception) {
+                _uiState.value = currentState.copy(
+                    actionErrorMessageRes = R.string.error_workout_details_failed
                 )
             }
+        }
+    }
+
+    fun clearActionError() {
+        _uiState.value = _uiState.value.copy(actionErrorMessageRes = null)
+    }
+
+    private fun reorderLocally(
+        exercises: List<ExerciseTemplate>,
+        exerciseId: String,
+        newOrder: Int
+    ): List<ExerciseTemplate> {
+        val sorted = exercises.sortedBy { it.orderIndex }.toMutableList()
+        val currentIndex = sorted.indexOfFirst { it.id == exerciseId }
+        if (currentIndex == -1) return exercises
+
+        val movedExercise = sorted.removeAt(currentIndex)
+        sorted.add(newOrder - 1, movedExercise)
+
+        return sorted.mapIndexed { index, item ->
+            item.copy(orderIndex = index + 1)
         }
     }
 }

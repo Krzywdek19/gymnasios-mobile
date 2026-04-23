@@ -1,6 +1,6 @@
 package com.krzywdek19.gymnasiosmobile.data.repository
 
-import com.krzywdek19.gymnasiosmobile.data.local.TokenStorage
+import com.krzywdek19.gymnasiosmobile.core.network.SessionManager
 import com.krzywdek19.gymnasiosmobile.data.remote.auth.AuthApi
 import com.krzywdek19.gymnasiosmobile.data.remote.auth.LoginRequestDto
 import com.krzywdek19.gymnasiosmobile.data.remote.auth.RefreshTokenRequestDto
@@ -8,7 +8,8 @@ import com.krzywdek19.gymnasiosmobile.data.remote.auth.RegisterRequestDto
 
 class AuthRepository(
     private val authApi: AuthApi,
-    private val tokenStorage: TokenStorage
+    private val tokenStorage: TokenStorage,
+    private val sessionManager: SessionManager
 ) {
 
     suspend fun register(email: String, password: String): Result<Unit> {
@@ -23,11 +24,13 @@ class AuthRepository(
     suspend fun login(email: String, password: String): Result<Unit> {
         return try {
             val response = authApi.login(LoginRequestDto(email, password))
-            tokenStorage.saveTokens(
+
+            sessionManager.onLogin(
                 accessToken = response.accessToken,
                 refreshToken = response.refreshToken,
                 expiresIn = response.expiresIn
             )
+
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -43,7 +46,7 @@ class AuthRepository(
                 RefreshTokenRequestDto(refreshToken)
             )
 
-            tokenStorage.saveTokens(
+            sessionManager.onLogin(
                 accessToken = response.accessToken,
                 refreshToken = response.refreshToken,
                 expiresIn = response.expiresIn
@@ -51,13 +54,14 @@ class AuthRepository(
 
             Result.success(response.accessToken)
         } catch (e: Exception) {
+            sessionManager.logout()
             Result.failure(e)
         }
     }
 
-    fun isLoggedIn(): Boolean = tokenStorage.isLoggedIn()
+    fun isLoggedIn(): Boolean = sessionManager.isLoggedIn.value
 
     fun logout() {
-        tokenStorage.clear()
+        sessionManager.logout()
     }
 }

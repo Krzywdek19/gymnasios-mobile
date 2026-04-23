@@ -1,20 +1,17 @@
-package com.krzywdek19.gymnasiosmobile.ui.theme
+package com.krzywdek19.gymnasiosmobile.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val SakuraPink50 = Color(0xFFFFF8FB)
-val SakuraPink100 = Color(0xFFFCEEF4)
-val SakuraPink200 = Color(0xFFF7DCE7)
-val SakuraPink300 = Color(0xFFEDB8CB)
-val SakuraPink400 = Color(0xFFE49AB7)
-val SakuraPink500 = Color(0xFFD97FA3)
-
-val Plum700 = Color(0xFF6F4C5E)
-val Plum800 = Color(0xFF573846)
-val Ink = Color(0xFF2F2329)
-
-val Paper = Color(0xFFFFF9FB)
-val PaperSoft = Color(0xFFF8F2F4)
-
-val GoldSoft = Color(0xFFD9B77A)
-val MatchaSoft = Color(0xFF9CAF88)
+val AppBackground = Color(0xFF070B16)
+val AppBackgroundTop = Color(0xFF121B33)
+val AppSurface = Color(0xFF1A2338)
+val AppSurfaceElevated = Color(0xFF24314D)
+val AppSurfaceMuted = Color(0xFF141D31)
+val AppPrimary = Color(0xFFF2C94C)
+val AppPrimaryContainer = Color(0xFF4B3F17)
+val AppOnPrimary = Color(0xFF101010)
+val AppTextPrimary = Color(0xFFF4F7FB)
+val AppTextSecondary = Color(0xFFB5C0D4)
+val AppOutline = Color(0xFF36445F)
+val AppError = Color(0xFFFF6B6B)
+val AppSuccess = Color(0xFF5ED39A)

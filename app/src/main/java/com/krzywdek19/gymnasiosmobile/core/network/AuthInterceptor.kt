@@ -1,24 +1,25 @@
 package com.krzywdek19.gymnasiosmobile.core.network
 
-import com.krzywdek19.gymnasiosmobile.data.local.TokenStorage
+import com.krzywdek19.gymnasiosmobile.data.repository.TokenStorage
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class AuthInterceptor (
+class AuthInterceptor(
     private val tokenStorage: TokenStorage
-): Interceptor {
+) : Interceptor {
+
     override fun intercept(chain: Interceptor.Chain): Response {
-        val originRequest = chain.request()
+        val originalRequest = chain.request()
         val accessToken = tokenStorage.getAccessToken()
 
-        if(accessToken.isNullOrBlank()) {
-            return chain.proceed(originRequest)
+        if (accessToken.isNullOrBlank()) {
+            return chain.proceed(originalRequest)
         }
 
-        val newRequest = originRequest.newBuilder()
-            .addHeader("Authorization", "Bearer $accessToken")
+        val authenticatedRequest = originalRequest.newBuilder()
+            .header("Authorization", "Bearer $accessToken")
             .build()
 
-        return chain.proceed(newRequest)
+        return chain.proceed(authenticatedRequest)
     }
 }

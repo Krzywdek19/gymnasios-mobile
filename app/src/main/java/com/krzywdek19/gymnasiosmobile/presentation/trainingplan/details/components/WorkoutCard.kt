@@ -1,10 +1,12 @@
 package com.krzywdek19.gymnasiosmobile.presentation.trainingplan.details.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -14,6 +16,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -37,80 +40,88 @@ fun WorkoutCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(if (isNextWorkout) 20.dp else 18.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isDragging) 10.dp else if (isNextWorkout) 4.dp else 2.dp
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isNextWorkout) {
+                MaterialTheme.colorScheme.surface.copy(alpha = 0.98f)
+            } else {
+                MaterialTheme.colorScheme.surface.copy(alpha = 0.94f)
+            }
         ),
-        colors = if (isNextWorkout) {
-            CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.65f)
-            )
-        } else {
-            CardDefaults.cardColors()
-        },
+        border = BorderStroke(
+            width = 1.dp,
+            color = if (isNextWorkout) {
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.28f)
+            } else {
+                MaterialTheme.colorScheme.outline.copy(alpha = 0.24f)
+            }
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (isDragging) 10.dp else 0.dp
+        ),
         onClick = { onClick(workout.id) }
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(if (isNextWorkout) 18.dp else 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(18.dp),
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            verticalAlignment = Alignment.Top
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.Top
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)
             ) {
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Text(
-                        text = workout.name,
-                        style = if (isNextWorkout) {
-                            MaterialTheme.typography.titleLarge
-                        } else {
-                            MaterialTheme.typography.titleMedium
-                        },
-                        fontWeight = if (isNextWorkout) {
-                            FontWeight.SemiBold
-                        } else {
-                            FontWeight.Medium
-                        }
-                    )
+                Text(
+                    text = displayOrder.toString(),
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
 
-                    if (isNextWorkout) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = workout.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                if (isNextWorkout) {
+                    Surface(
+                        shape = RoundedCornerShape(999.dp),
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)
+                    ) {
                         Text(
                             text = stringResource(R.string.next_workout_label),
-                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                            style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.primary
                         )
                     }
+                }
+            }
 
-                    Text(
-                        text = stringResource(R.string.workout_order, displayOrder),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = { onEdit(workout) }) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = stringResource(R.string.edit_workout),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
-                Row {
-                    IconButton(
-                        onClick = { onEdit(workout) }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = stringResource(R.string.edit_workout)
-                        )
-                    }
-
-                    IconButton(
-                        onClick = { onDelete(workout.id) }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = stringResource(R.string.delete_workout)
-                        )
-                    }
+                IconButton(onClick = { onDelete(workout.id) }) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(R.string.delete_workout),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }

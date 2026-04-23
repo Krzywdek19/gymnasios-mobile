@@ -1,24 +1,17 @@
 package com.krzywdek19.gymnasiosmobile.presentation.exercisetemplate.create
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,6 +21,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.krzywdek19.gymnasiosmobile.R
+import com.krzywdek19.gymnasiosmobile.core.ui.components.AppCard
+import com.krzywdek19.gymnasiosmobile.core.ui.components.AppGradientBackground
+import com.krzywdek19.gymnasiosmobile.core.ui.components.AppTextField
+import com.krzywdek19.gymnasiosmobile.core.ui.components.AppTopBar
+import com.krzywdek19.gymnasiosmobile.core.ui.components.PrimaryButton
 import com.krzywdek19.gymnasiosmobile.di.AppContainer
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,71 +53,65 @@ fun CreateExerciseTemplateScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.add_exercise_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back)
+            AppTopBar(
+                title = stringResource(R.string.add_exercise_title),
+                subtitle = stringResource(R.string.create_exercise_subtitle),
+                navigationIcon = Icons.AutoMirrored.Filled.ArrowBack,
+                navigationContentDescription = stringResource(R.string.back),
+                onNavigationClick = onBack
+            )
+        },
+        containerColor = androidx.compose.ui.graphics.Color.Transparent
+    ) { innerPadding ->
+        AppGradientBackground {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(horizontal = 20.dp, vertical = 12.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                AppCard(modifier = Modifier.fillMaxWidth()) {
+                    AppTextField(
+                        value = uiState.name,
+                        onValueChange = viewModel::onNameChange,
+                        label = stringResource(R.string.exercise_name_label)
+                    )
+
+                    AppTextField(
+                        value = uiState.setsCount,
+                        onValueChange = viewModel::onSetsCountChange,
+                        label = stringResource(R.string.sets_count_label)
+                    )
+
+                    AppTextField(
+                        value = uiState.reps,
+                        onValueChange = viewModel::onRepsChange,
+                        label = stringResource(R.string.reps_label)
+                    )
+
+                    AppTextField(
+                        value = uiState.notes,
+                        onValueChange = viewModel::onNotesChange,
+                        label = stringResource(R.string.notes_label),
+                        singleLine = false
+                    )
+
+                    uiState.errorMessageRes?.let { errorRes ->
+                        Text(
+                            text = stringResource(errorRes),
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors()
-            )
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            OutlinedTextField(
-                value = uiState.name,
-                onValueChange = viewModel::onNameChange,
-                label = { Text(stringResource(R.string.exercise_name_label)) },
-                modifier = Modifier.fillMaxWidth()
-            )
 
-            OutlinedTextField(
-                value = uiState.setsCount,
-                onValueChange = viewModel::onSetsCountChange,
-                label = { Text(stringResource(R.string.sets_count_label)) },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = uiState.reps,
-                onValueChange = viewModel::onRepsChange,
-                label = { Text(stringResource(R.string.reps_label)) },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = uiState.notes,
-                onValueChange = viewModel::onNotesChange,
-                label = { Text(stringResource(R.string.notes_label)) },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            uiState.errorMessageRes?.let { errorRes ->
-                Text(
-                    text = stringResource(errorRes),
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
-
-            Button(
-                onClick = { viewModel.saveExercise(orderIndex = 1) },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isSaving
-            ) {
-                if (uiState.isSaving) {
-                    CircularProgressIndicator()
-                } else {
-                    Text(stringResource(R.string.save))
+                    PrimaryButton(
+                        text = stringResource(R.string.create_exercise_button),
+                        onClick = { viewModel.saveExercise(orderIndex = 1) },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !uiState.isSaving,
+                        isLoading = uiState.isSaving
+                    )
                 }
             }
         }

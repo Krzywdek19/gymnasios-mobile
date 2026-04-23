@@ -5,25 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.krzywdek19.gymnasiosmobile.core.navigation.AppNavigation
-import com.krzywdek19.gymnasiosmobile.core.network.ApiFactory
 import com.krzywdek19.gymnasiosmobile.core.network.RetrofitProvider
 import com.krzywdek19.gymnasiosmobile.core.ui.theme.GymnasiosMobileTheme
-import com.krzywdek19.gymnasiosmobile.data.local.TokenStorage
-import com.krzywdek19.gymnasiosmobile.data.repository.AuthRepository
+import com.krzywdek19.gymnasiosmobile.di.AppContainer
 import com.krzywdek19.gymnasiosmobile.presentation.auth.login.LoginViewModel
 import com.krzywdek19.gymnasiosmobile.presentation.auth.register.RegisterViewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val tokenStorage by lazy {
-        TokenStorage(applicationContext)
-    }
-
     private val authRepository by lazy {
-        AuthRepository(
-            authApi = ApiFactory.authApi,
-            tokenStorage = tokenStorage
-        )
+        AppContainer.authRepository
     }
 
     private val loginViewModel by lazy {
@@ -36,15 +27,26 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        AppContainer.init(applicationContext)
+
+        val tokenStorage = AppContainer.getTokenStorage()
+        val sessionManager = AppContainer.sessionManager
+
+        RetrofitProvider.init(
+            tokenStorage = tokenStorage,
+            sessionManager = sessionManager
+        )
+
         enableEdgeToEdge()
-        RetrofitProvider.init(tokenStorage)
+
         setContent {
             GymnasiosMobileTheme {
                 AppNavigation(
-                    isLoggedIn = tokenStorage.isLoggedIn(),
                     loginViewModel = loginViewModel,
                     registerViewModel = registerViewModel,
-                    authRepository = authRepository
+                    authRepository = authRepository,
+                    sessionManager = sessionManager
                 )
             }
         }

@@ -1,6 +1,7 @@
-package com.krzywdek19.gymnasiosmobile.data.local
+package com.krzywdek19.gymnasiosmobile.data.repository
 
 import android.content.Context
+import androidx.core.content.edit
 
 class TokenStorage(context: Context) {
 
@@ -11,11 +12,11 @@ class TokenStorage(context: Context) {
         refreshToken: String,
         expiresIn: Long
     ) {
-        prefs.edit()
-            .putString("access_token", accessToken)
-            .putString("refresh_token", refreshToken)
-            .putLong("expires_in", expiresIn)
-            .apply()
+        prefs.edit {
+            putString("access_token", accessToken)
+                .putString("refresh_token", refreshToken)
+                .putLong("expires_in", expiresIn)
+        }
     }
 
     fun getAccessToken(): String? = prefs.getString("access_token", null)
@@ -25,6 +26,6 @@ class TokenStorage(context: Context) {
     fun isLoggedIn(): Boolean = !getAccessToken().isNullOrBlank()
 
     fun clear() {
-        prefs.edit().clear().apply()
+        prefs.edit { clear() }
     }
 }

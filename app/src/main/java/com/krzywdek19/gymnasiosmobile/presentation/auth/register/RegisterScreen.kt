@@ -2,22 +2,32 @@ package com.krzywdek19.gymnasiosmobile.presentation.auth.register
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import com.krzywdek19.gymnasiosmobile.R
+import com.krzywdek19.gymnasiosmobile.core.ui.components.AccentBadge
+import com.krzywdek19.gymnasiosmobile.core.ui.components.AppCard
+import com.krzywdek19.gymnasiosmobile.core.ui.components.AppGradientBackground
+import com.krzywdek19.gymnasiosmobile.core.ui.components.AppTextField
+import com.krzywdek19.gymnasiosmobile.core.ui.components.PrimaryButton
+import com.krzywdek19.gymnasiosmobile.core.ui.components.SecondaryActionText
+import com.krzywdek19.gymnasiosmobile.core.ui.theme.AppTextPrimary
 
 @Composable
 fun RegisterScreen(
@@ -33,68 +43,87 @@ fun RegisterScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        Text(
-            text = "Rejestracja",
-            style = MaterialTheme.typography.headlineMedium
-        )
-
-        OutlinedTextField(
-            value = uiState.email,
-            onValueChange = viewModel::onEmailChange,
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = uiState.password,
-            onValueChange = viewModel::onPasswordChange,
-            label = { Text("Hasło") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = uiState.confirmPassword,
-            onValueChange = viewModel::onConfirmPasswordChange,
-            label = { Text("Powtórz hasło") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Button(
-            onClick = viewModel::register,
-            enabled = !uiState.isLoading,
-            modifier = Modifier.fillMaxWidth()
+    AppGradientBackground {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp)
+                .padding(top = 56.dp, bottom = 24.dp),
+            verticalArrangement = Arrangement.Top
         ) {
-            Text("Załóż konto")
-        }
+            AccentBadge(text = stringResource(R.string.register_badge))
 
-        TextButton(
-            onClick = onGoToLogin,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Masz już konto? Zaloguj się")
-        }
+            Spacer(modifier = Modifier.height(16.dp))
 
-        if (uiState.isLoading) {
-            CircularProgressIndicator()
-        }
-
-        uiState.errorMessage?.let {
             Text(
-                text = it,
-                color = MaterialTheme.colorScheme.error
+                text = stringResource(R.string.register_title),
+                style = MaterialTheme.typography.headlineLarge,
+                color = AppTextPrimary
             )
-        }
 
-        if (uiState.isSuccess) {
-            Text("Konto utworzone. Zweryfikuj email i zaloguj się.")
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(R.string.register_subtitle),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            AppCard(modifier = Modifier.fillMaxWidth()) {
+                AppTextField(
+                    value = uiState.email,
+                    onValueChange = viewModel::onEmailChange,
+                    label = stringResource(R.string.email_label)
+                )
+
+                AppTextField(
+                    value = uiState.password,
+                    onValueChange = viewModel::onPasswordChange,
+                    label = stringResource(R.string.password_label),
+                    visualTransformation = PasswordVisualTransformation()
+                )
+
+                AppTextField(
+                    value = uiState.confirmPassword,
+                    onValueChange = viewModel::onConfirmPasswordChange,
+                    label = stringResource(R.string.confirm_password_label),
+                    visualTransformation = PasswordVisualTransformation()
+                )
+
+                uiState.errorMessageRes?.let { errorRes ->
+                    Text(
+                        text = stringResource(errorRes),
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
+                if (uiState.isSuccess) {
+                    Text(
+                        text = stringResource(R.string.register_success),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.tertiary
+                    )
+                }
+
+                PrimaryButton(
+                    text = stringResource(R.string.register_action),
+                    onClick = viewModel::register,
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !uiState.isLoading,
+                    isLoading = uiState.isLoading
+                )
+
+                SecondaryActionText(
+                    text = stringResource(R.string.register_go_to_login),
+                    onClick = onGoToLogin,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }

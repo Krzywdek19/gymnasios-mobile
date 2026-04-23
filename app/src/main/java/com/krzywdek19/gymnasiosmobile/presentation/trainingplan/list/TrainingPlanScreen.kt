@@ -1,87 +1,177 @@
 package com.krzywdek19.gymnasiosmobile.presentation.trainingplan.list
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavBackStackEntry
 import com.krzywdek19.gymnasiosmobile.R
+import com.krzywdek19.gymnasiosmobile.core.ui.components.AppGradientBackground
+import com.krzywdek19.gymnasiosmobile.core.ui.components.EmptyStateCard
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
-fun TrainingPlanScreen(onPlanClick: (String) -> Unit, onAddClick: () -> Unit, viewModel: TrainingPlanViewModel = viewModel(
-    factory = TrainingPlanViewModelFactory()
-)) {
+fun TrainingPlanScreen(
+    backStackEntry: NavBackStackEntry,
+    onPlanClick: (String) -> Unit,
+    onAddClick: () -> Unit,
+    onLogoutClick: () -> Unit,
+    viewModel: TrainingPlanViewModel = viewModel(factory = TrainingPlanViewModelFactory())
+) {
     val uiState by viewModel.uiState.collectAsState()
+    val planCreated by backStackEntry.savedStateHandle
+        .getStateFlow("plan_created", false)
+        .collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.loadPlans()
     }
 
+    LaunchedEffect(planCreated) {
+        if (planCreated) {
+            viewModel.loadPlans()
+            backStackEntry.savedStateHandle["plan_created"] = false
+        }
+    }
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = onAddClick
+                onClick = onAddClick,
+                modifier = Modifier.navigationBarsPadding(),
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
-                Text("+")
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.fab_add_plan_description)
+                )
             }
-        }
+        },
+        containerColor = androidx.compose.ui.graphics.Color.Transparent
     ) { innerPadding ->
-
-        when (uiState) {
-
-            is TrainingPlanUiState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+        AppGradientBackground {
+            when (val state = uiState) {
+                is TrainingPlanUiState.Loading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
-            }
 
-            is TrainingPlanUiState.Success -> {
-                val plans = (uiState as TrainingPlanUiState.Success).plans
-
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(plans) { plan ->
-                        TrainingPlanItem(
-                            plan = plan,
-                            onClick = {
-                                onPlanClick(it.id)
-                            }
+                is TrainingPlanUiState.Error -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                            .padding(horizontal = 20.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        EmptyStateCard(
+                            title = stringResource(R.string.error_generic),
+                            description = stringResource(state.messageRes)
                         )
                     }
                 }
-            }
 
-            is TrainingPlanUiState.Error -> {
-                val errorRes = (uiState as TrainingPlanUiState.Error).messageRes
+                is TrainingPlanUiState.Success -> {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .statusBarsPadding()
+                            .padding(innerPadding),
+                        contentPadding = PaddingValues(
+                            start = 20.dp,
+                            end = 20.dp,
+                            top = 16.dp,
+                            bottom = 96.dp
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        item {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.Top
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = stringResource(R.string.training_plans_header),
+                                        style = MaterialTheme.typography.headlineMedium,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontWeight = FontWeight.Bold
+                                    )
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = stringResource(errorRes))
+                                    Text(
+                                        text = stringResource(R.string.training_plans_subtitle),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.padding(top = 6.dp)
+                                    )
+                                }
+
+                                IconButton(onClick = onLogoutClick) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                                        contentDescription = stringResource(R.string.logout_description),
+                                        tint = MaterialTheme.colorScheme.onBackground
+                                    )
+                                }
+                            }
+                        }
+
+                        if (state.plans.isEmpty()) {
+                            item {
+                                EmptyStateCard(
+                                    title = stringResource(R.string.training_plan_empty_title),
+                                    description = stringResource(R.string.training_plan_empty_description)
+                                )
+                            }
+                        } else {
+                            items(
+                                items = state.plans,
+                                key = { it.id }
+                            ) { plan ->
+                                TrainingPlanItem(
+                                    plan = plan,
+                                    onClick = { selectedPlan ->
+                                        onPlanClick(selectedPlan.id)
+                                    }
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
