@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -18,8 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import com.krzywdek19.gymnasiosmobile.R
 import com.krzywdek19.gymnasiosmobile.core.ui.components.AccentBadge
 import com.krzywdek19.gymnasiosmobile.core.ui.components.AppCard
@@ -87,6 +87,12 @@ fun RegisterScreen(
                     visualTransformation = PasswordVisualTransformation()
                 )
 
+                Text(
+                    text = stringResource(R.string.password_requirements_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
                 AppTextField(
                     value = uiState.confirmPassword,
                     onValueChange = viewModel::onConfirmPasswordChange,
@@ -99,14 +105,6 @@ fun RegisterScreen(
                         text = stringResource(errorRes),
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-
-                if (uiState.isSuccess) {
-                    Text(
-                        text = stringResource(R.string.register_success),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.tertiary
                     )
                 }
 

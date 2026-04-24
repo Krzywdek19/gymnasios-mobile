@@ -33,7 +33,8 @@
     <string name="login_action">Zaloguj się</string>
     <string name="login_go_to_register">Nie masz konta? Zarejestruj się</string>
     <string name="error_login_fields_required">Uzupełnij adres e-mail i hasło</string>
-
+    <string name="error_account_not_activated">Konto jest nieaktywne. Potwierdź rejestrację przez link wysłany na e-mail.</string>
+    <string name="error_invalid_email_or_password">Nieprawidłowy adres e-mail lub hasło.</string>
 
     <!-- Auth / Register -->
     <string name="register_badge">Nowe konto</string>
@@ -46,6 +47,9 @@
     <string name="register_success">Konto utworzone. Zweryfikuj adres e-mail i zaloguj się.</string>
     <string name="error_register_fields_required">Uzupełnij wszystkie pola</string>
     <string name="error_register_password_mismatch">Hasła nie są takie same</string>
+    <string name="error_email_already_taken">Ten adres e-mail jest już zajęty.</string>
+    <string name="error_password_requirements">Hasło musi mieć co najmniej 8 znaków, jedną dużą literę, jedną cyfrę i jeden znak specjalny.</string>
+    <string name="password_requirements_hint">Hasło: min. 8 znaków, 1 duża litera, 1 cyfra, 1 znak specjalny.</string>
 
     <!-- Errors / validation -->
     <string name="error_generic">Wystąpił błąd</string>

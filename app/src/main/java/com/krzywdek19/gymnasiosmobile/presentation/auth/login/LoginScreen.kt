@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -18,15 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.krzywdek19.gymnasiosmobile.R
 import com.krzywdek19.gymnasiosmobile.core.ui.components.AppCard
 import com.krzywdek19.gymnasiosmobile.core.ui.components.AppGradientBackground
 import com.krzywdek19.gymnasiosmobile.core.ui.components.AppTextField
 import com.krzywdek19.gymnasiosmobile.core.ui.components.PrimaryButton
 import com.krzywdek19.gymnasiosmobile.core.ui.components.SecondaryActionText
 import com.krzywdek19.gymnasiosmobile.core.ui.theme.AppTextPrimary
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import com.krzywdek19.gymnasiosmobile.R
 
 @Composable
 fun LoginScreen(
@@ -81,6 +81,14 @@ fun LoginScreen(
                     label = stringResource(R.string.password_label),
                     visualTransformation = PasswordVisualTransformation()
                 )
+
+                uiState.infoMessageRes?.let { messageRes ->
+                    Text(
+                        text = stringResource(messageRes),
+                        color = MaterialTheme.colorScheme.tertiary,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
 
                 uiState.errorMessageRes?.let { errorRes ->
                     Text(

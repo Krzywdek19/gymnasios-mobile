@@ -33,18 +33,22 @@
     <string name="login_action">Sign in</string>
     <string name="login_go_to_register">Don’t have an account? Create one</string>
     <string name="error_login_fields_required">Enter your email and password</string>
+    <string name="error_account_not_activated">Your account is not active. Confirm your registration using the link sent to your email.</string>
+    <string name="error_invalid_email_or_password">Invalid email address or password.</string>
 
     <!-- Auth / Register -->
     <string name="register_badge">New account</string>
     <string name="register_title">Join Gymnasios</string>
     <string name="register_subtitle">Create an account to start using the app.</string>
-    <string name="register_subittle">Create an account to start using the app.</string>
     <string name="register_button">Create account</string>
     <string name="register_action">Create account</string>
     <string name="register_go_to_login">Already have an account? Sign in</string>
     <string name="register_success">Account created. Verify your email address and sign in.</string>
     <string name="error_register_fields_required">Fill in all fields</string>
     <string name="error_register_password_mismatch">Passwords do not match</string>
+    <string name="error_email_already_taken">This email address is already taken.</string>
+    <string name="error_password_requirements">Password must be at least 8 characters long and contain one uppercase letter, one digit, and one special character.</string>
+    <string name="password_requirements_hint">Password: at least 8 characters, 1 uppercase letter, 1 digit, 1 special character.</string>
 
     <!-- Errors / validation -->
     <string name="error_generic">Something went wrong</string>
