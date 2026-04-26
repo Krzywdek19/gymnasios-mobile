@@ -16,12 +16,12 @@ interface AuthApi {
         @Body request: LoginRequestDto
     ): TokenResponseDto
 
-    @POST("api/v1/auth/refresh")
+    @POST("api/v1/token/refresh")
     suspend fun refreshToken(
         @Body request: RefreshTokenRequestDto
     ): TokenResponseDto
 
-    @POST("api/v1/auth/refresh")
+    @POST("api/v1/token/refresh")
     fun refreshTokenCall(
         @Body request: RefreshTokenRequestDto
     ): Call<TokenResponseDto>

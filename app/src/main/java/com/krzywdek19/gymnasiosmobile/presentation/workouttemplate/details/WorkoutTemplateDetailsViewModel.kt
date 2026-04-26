@@ -93,6 +93,82 @@ class WorkoutTemplateDetailsViewModel(
         }
     }
 
+    fun updateExercise(
+        exerciseId: String,
+        name: String,
+        setsCount: Int,
+        reps: String,
+        notes: String?
+    ) {
+        val currentState = _uiState.value
+        val exercise = currentState.exercises.firstOrNull { it.id == exerciseId } ?: return
+
+        val trimmedName = name.trim()
+        val trimmedReps = reps.trim()
+
+        when {
+            trimmedName.isBlank() -> {
+                _uiState.value = currentState.copy(
+                    actionErrorMessageRes = R.string.error_exercise_name_required
+                )
+                return
+            }
+
+            setsCount <= 0 -> {
+                _uiState.value = currentState.copy(
+                    actionErrorMessageRes = R.string.error_sets_count_invalid
+                )
+                return
+            }
+
+            trimmedReps.isBlank() -> {
+                _uiState.value = currentState.copy(
+                    actionErrorMessageRes = R.string.error_reps_required
+                )
+                return
+            }
+        }
+
+        viewModelScope.launch {
+            try {
+                exerciseTemplateRepository.updateExercise(
+                    id = exercise.id,
+                    name = trimmedName,
+                    setsCount = setsCount,
+                    reps = trimmedReps,
+                    orderIndex = exercise.orderIndex,
+                    notes = notes?.trim()?.ifBlank { null }
+                )
+                loadData()
+            } catch (_: Exception) {
+                _uiState.value = currentState.copy(
+                    actionErrorMessageRes = R.string.error_saving_exercise
+                )
+            }
+        }
+    }
+
+    fun deleteExercise(exerciseId: String) {
+        val currentState = _uiState.value
+        val exercise = currentState.exercises.firstOrNull { it.id == exerciseId } ?: return
+
+        _uiState.value = currentState.copy(
+            exercises = currentState.exercises.filterNot { it.id == exerciseId },
+            actionErrorMessageRes = null
+        )
+
+        viewModelScope.launch {
+            try {
+                exerciseTemplateRepository.deleteExerciseById(exercise.id)
+                loadData()
+            } catch (_: Exception) {
+                _uiState.value = currentState.copy(
+                    actionErrorMessageRes = R.string.error_workout_details_failed
+                )
+            }
+        }
+    }
+
     fun clearActionError() {
         _uiState.value = _uiState.value.copy(actionErrorMessageRes = null)
     }

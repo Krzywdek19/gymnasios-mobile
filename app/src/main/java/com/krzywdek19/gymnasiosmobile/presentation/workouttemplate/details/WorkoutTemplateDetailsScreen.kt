@@ -14,13 +14,20 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -74,6 +81,16 @@ fun WorkoutTemplateDetailsScreen(
     val exerciseCreated by backStackEntry.savedStateHandle
         .getStateFlow("exercise_created", false)
         .collectAsState()
+
+    var showEditDialog by remember { mutableStateOf(false) }
+    var editedExerciseId by remember { mutableStateOf<String?>(null) }
+    var editedExerciseName by remember { mutableStateOf("") }
+    var editedSetsCount by remember { mutableStateOf("") }
+    var editedReps by remember { mutableStateOf("") }
+    var editedNotes by remember { mutableStateOf("") }
+
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var exerciseToDelete by remember { mutableStateOf<ExerciseTemplate?>(null) }
 
     LaunchedEffect(exerciseCreated) {
         if (exerciseCreated) {
@@ -258,6 +275,18 @@ fun WorkoutTemplateDetailsScreen(
                                                     pendingReorder = null
                                                 }
                                             )
+                                        },
+                                        onEdit = { selectedExercise ->
+                                            editedExerciseId = selectedExercise.id
+                                            editedExerciseName = selectedExercise.name
+                                            editedSetsCount = selectedExercise.setsCount.toString()
+                                            editedReps = selectedExercise.reps
+                                            editedNotes = selectedExercise.notes.orEmpty()
+                                            showEditDialog = true
+                                        },
+                                        onDelete = { selectedExercise ->
+                                            exerciseToDelete = selectedExercise
+                                            showDeleteDialog = true
                                         }
                                     )
                                 }
@@ -268,6 +297,135 @@ fun WorkoutTemplateDetailsScreen(
             }
         }
     }
+
+    if (showEditDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showEditDialog = false
+                editedExerciseId = null
+                editedExerciseName = ""
+                editedSetsCount = ""
+                editedReps = ""
+                editedNotes = ""
+            },
+            title = { Text(stringResource(R.string.edit_exercise_description)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    OutlinedTextField(
+                        value = editedExerciseName,
+                        onValueChange = { editedExerciseName = it },
+                        label = { Text(stringResource(R.string.exercise_name_label)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = editedSetsCount,
+                        onValueChange = { editedSetsCount = it },
+                        label = { Text(stringResource(R.string.sets_count_label)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = editedReps,
+                        onValueChange = { editedReps = it },
+                        label = { Text(stringResource(R.string.reps_label)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = editedNotes,
+                        onValueChange = { editedNotes = it },
+                        label = { Text(stringResource(R.string.notes_label)) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val exerciseId = editedExerciseId
+                        val setsCount = editedSetsCount.toIntOrNull()
+                        if (
+                            exerciseId != null &&
+                            editedExerciseName.trim().isNotEmpty() &&
+                            setsCount != null &&
+                            setsCount > 0 &&
+                            editedReps.trim().isNotEmpty()
+                        ) {
+                            viewModel.updateExercise(
+                                exerciseId = exerciseId,
+                                name = editedExerciseName.trim(),
+                                setsCount = setsCount,
+                                reps = editedReps.trim(),
+                                notes = editedNotes.trim().ifBlank { null }
+                            )
+                            showEditDialog = false
+                            editedExerciseId = null
+                            editedExerciseName = ""
+                            editedSetsCount = ""
+                            editedReps = ""
+                            editedNotes = ""
+                        }
+                    }
+                ) {
+                    Text(stringResource(R.string.save))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showEditDialog = false
+                        editedExerciseId = null
+                        editedExerciseName = ""
+                        editedSetsCount = ""
+                        editedReps = ""
+                        editedNotes = ""
+                    }
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showDeleteDialog = false
+                exerciseToDelete = null
+            },
+            title = { Text(stringResource(R.string.delete_exercise_description)) },
+            text = {
+                Text(text = exerciseToDelete?.name.orEmpty())
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        exerciseToDelete?.let { exercise ->
+                            viewModel.deleteExercise(exercise.id)
+                        }
+                        showDeleteDialog = false
+                        exerciseToDelete = null
+                    }
+                ) {
+                    Text(stringResource(R.string.delete))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                        exerciseToDelete = null
+                    }
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -275,7 +433,9 @@ private fun ExerciseRow(
     exercise: ExerciseTemplate,
     displayOrder: Int,
     isDragging: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onEdit: (ExerciseTemplate) -> Unit,
+    onDelete: (ExerciseTemplate) -> Unit
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -292,12 +452,37 @@ private fun ExerciseRow(
                 .padding(18.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(
-                text = exercise.name,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                Text(
+                    text = exercise.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.weight(1f)
+                )
+
+                Row {
+                    IconButton(onClick = { onEdit(exercise) }) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = stringResource(R.string.edit_exercise_description),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    IconButton(onClick = { onDelete(exercise) }) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = stringResource(R.string.delete_exercise_description),
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+            }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),

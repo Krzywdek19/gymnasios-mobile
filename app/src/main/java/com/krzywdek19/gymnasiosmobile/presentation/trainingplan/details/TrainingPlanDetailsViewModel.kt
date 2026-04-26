@@ -133,4 +133,36 @@ class TrainingPlanDetailsViewModel(
     private fun TrainingPlan.findWorkout(workoutId: String): WorkoutTemplate? {
         return workouts.firstOrNull { it.id == workoutId }
     }
+
+    fun renamePlan(
+        planId: String,
+        newName: String
+    ) {
+        val trimmedName = newName.trim()
+        if (trimmedName.isEmpty()) return
+
+        viewModelScope.launch {
+            try {
+                repository.updateTrainingPlan(planId, trimmedName)
+                refreshPlan(planId, showLoading = false)
+            } catch (e: Exception) {
+                _uiState.value = TrainingPlanDetailsUiState.Error(R.string.error_generic)
+            }
+        }
+    }
+
+    fun deletePlan(
+        planId: String,
+        onDeleted: () -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                repository.deleteTrainingPlan(planId)
+                onDeleted()
+            } catch (e: Exception) {
+                _uiState.value = TrainingPlanDetailsUiState.Error(R.string.error_generic)
+            }
+        }
+    }
 }
+

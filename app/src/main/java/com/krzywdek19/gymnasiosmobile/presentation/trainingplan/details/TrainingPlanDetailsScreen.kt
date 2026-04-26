@@ -1,5 +1,8 @@
 package com.krzywdek19.gymnasiosmobile.presentation.trainingplan.details
 
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -42,9 +45,6 @@ import com.krzywdek19.gymnasiosmobile.core.ui.components.PrimaryButton
 import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.details.components.WorkoutCard
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 
 private data class PendingWorkoutReorder(
     val workoutId: String,
@@ -57,16 +57,24 @@ fun TrainingPlanDetailsScreen(
     planId: String,
     onBack: () -> Unit,
     onWorkoutClick: (String) -> Unit,
+    onPlanDeleted: () -> Unit,
     viewModel: TrainingPlanDetailsViewModel = viewModel(
         factory = TrainingPlanDetailsViewModelFactory()
     )
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
     var showAddDialog by remember { mutableStateOf(false) }
     var workoutName by remember { mutableStateOf("") }
+
     var showRenameDialog by remember { mutableStateOf(false) }
     var editedWorkoutId by remember { mutableStateOf<String?>(null) }
     var editedWorkoutName by remember { mutableStateOf("") }
+
+    var showRenamePlanDialog by remember { mutableStateOf(false) }
+    var editedPlanName by remember { mutableStateOf("") }
+
+    var showDeletePlanDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(planId) {
         viewModel.loadPlan(planId)
@@ -133,6 +141,7 @@ fun TrainingPlanDetailsScreen(
 
                 is TrainingPlanDetailsUiState.Success -> {
                     val plan = state.plan
+
                     val initialWorkouts = remember(plan.id, plan.workouts) {
                         plan.workouts.sortedBy { it.orderIndex }
                     }
@@ -148,25 +157,26 @@ fun TrainingPlanDetailsScreen(
                     val lazyListState = rememberLazyListState()
                     val staticItemsBeforeWorkouts = 2 + if (state.actionErrorMessageRes != null) 1 else 0
 
-                    val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
-                        val fromIndex = from.index - staticItemsBeforeWorkouts
-                        val toIndex = to.index - staticItemsBeforeWorkouts
+                    val reorderableLazyListState =
+                        rememberReorderableLazyListState(lazyListState) { from, to ->
+                            val fromIndex = from.index - staticItemsBeforeWorkouts
+                            val toIndex = to.index - staticItemsBeforeWorkouts
 
-                        if (fromIndex == toIndex) return@rememberReorderableLazyListState
-                        if (fromIndex !in reorderedWorkouts.indices) return@rememberReorderableLazyListState
-                        if (toIndex !in reorderedWorkouts.indices) return@rememberReorderableLazyListState
+                            if (fromIndex == toIndex) return@rememberReorderableLazyListState
+                            if (fromIndex !in reorderedWorkouts.indices) return@rememberReorderableLazyListState
+                            if (toIndex !in reorderedWorkouts.indices) return@rememberReorderableLazyListState
 
-                        reorderedWorkouts = reorderedWorkouts.toMutableList().apply {
-                            val movedItem = removeAt(fromIndex)
-                            add(toIndex, movedItem)
+                            reorderedWorkouts = reorderedWorkouts.toMutableList().apply {
+                                val movedItem = removeAt(fromIndex)
+                                add(toIndex, movedItem)
+                            }
+
+                            val movedWorkout = reorderedWorkouts[toIndex]
+                            pendingReorder = PendingWorkoutReorder(
+                                workoutId = movedWorkout.id,
+                                newOrder = toIndex + 1
+                            )
                         }
-
-                        val movedWorkout = reorderedWorkouts[toIndex]
-                        pendingReorder = PendingWorkoutReorder(
-                            workoutId = movedWorkout.id,
-                            newOrder = toIndex + 1
-                        )
-                    }
 
                     LazyColumn(
                         modifier = Modifier
@@ -206,6 +216,33 @@ fun TrainingPlanDetailsScreen(
                                         modifier = Modifier.weight(1f)
                                     )
                                 }
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    TextButton(
+                                        onClick = {
+                                            editedPlanName = plan.name
+                                            showRenamePlanDialog = true
+                                        },
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text(stringResource(R.string.rename_plan))
+                                    }
+
+                                    TextButton(
+                                        onClick = {
+                                            showDeletePlanDialog = true
+                                        },
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.delete_plan),
+                                            color = MaterialTheme.colorScheme.error
+                                        )
+                                    }
+                                }
                             }
                         }
 
@@ -238,7 +275,8 @@ fun TrainingPlanDetailsScreen(
                                     state = reorderableLazyListState,
                                     key = workout.id
                                 ) { isDragging ->
-                                    val currentIndex = reorderedWorkouts.indexOfFirst { it.id == workout.id }
+                                    val currentIndex =
+                                        reorderedWorkouts.indexOfFirst { it.id == workout.id }
                                     if (currentIndex == -1) return@ReorderableItem
 
                                     val displayOrder = currentIndex + 1
@@ -313,6 +351,90 @@ fun TrainingPlanDetailsScreen(
                                     onClick = {
                                         showAddDialog = false
                                         workoutName = ""
+                                    }
+                                ) {
+                                    Text(stringResource(R.string.cancel))
+                                }
+                            }
+                        )
+                    }
+
+                    if (showRenamePlanDialog) {
+                        AlertDialog(
+                            onDismissRequest = {
+                                showRenamePlanDialog = false
+                                editedPlanName = ""
+                            },
+                            title = { Text(stringResource(R.string.rename_plan_title)) },
+                            text = {
+                                OutlinedTextField(
+                                    value = editedPlanName,
+                                    onValueChange = { editedPlanName = it },
+                                    label = { Text(stringResource(R.string.rename_plan_label)) },
+                                    singleLine = true,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        val trimmedName = editedPlanName.trim()
+                                        if (trimmedName.isNotEmpty()) {
+                                            viewModel.renamePlan(
+                                                planId = plan.id,
+                                                newName = trimmedName
+                                            )
+                                            showRenamePlanDialog = false
+                                            editedPlanName = ""
+                                        }
+                                    },
+                                    enabled = editedPlanName.trim().isNotEmpty()
+                                ) {
+                                    Text(stringResource(R.string.save))
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(
+                                    onClick = {
+                                        showRenamePlanDialog = false
+                                        editedPlanName = ""
+                                    }
+                                ) {
+                                    Text(stringResource(R.string.cancel))
+                                }
+                            }
+                        )
+                    }
+
+                    if (showDeletePlanDialog) {
+                        AlertDialog(
+                            onDismissRequest = {
+                                showDeletePlanDialog = false
+                            },
+                            title = { Text(stringResource(R.string.delete_plan_title)) },
+                            text = {
+                                Text(stringResource(R.string.delete_plan_confirmation))
+                            },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        showDeletePlanDialog = false
+                                        viewModel.deletePlan(
+                                            planId = plan.id,
+                                            onDeleted = onPlanDeleted
+                                        )
+                                    }
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.delete),
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(
+                                    onClick = {
+                                        showDeletePlanDialog = false
                                     }
                                 ) {
                                     Text(stringResource(R.string.cancel))

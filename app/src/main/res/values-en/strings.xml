@@ -96,6 +96,12 @@
     <string name="workouts_list_header">Workout list</string>
     <string name="next_workout_badge">Next workout</string>
     <string name="workout_position">%1$d</string>
+    <string name="rename_plan">Rename plan</string>
+    <string name="delete_plan">Delete plan</string>
+    <string name="rename_plan_title">Rename training plan</string>
+    <string name="rename_plan_label">Plan name</string>
+    <string name="delete_plan_title">Delete training plan</string>
+    <string name="delete_plan_confirmation">Are you sure you want to delete this training plan?</string>
 
     <!-- Workout details -->
     <string name="workout_badge">Workout</string>

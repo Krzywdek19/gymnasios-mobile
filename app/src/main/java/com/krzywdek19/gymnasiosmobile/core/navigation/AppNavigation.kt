@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.krzywdek19.gymnasiosmobile.core.network.SessionManager
 import com.krzywdek19.gymnasiosmobile.data.repository.AuthRepository
@@ -28,58 +29,70 @@ fun AppNavigation(
 ) {
     val navController = rememberNavController()
     val isLoggedIn by sessionManager.isLoggedIn.collectAsState()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
-    if (!isLoggedIn) {
-        NavHost(
-            navController = navController,
-            startDestination = Screen.Login.route
-        ) {
-            composable(Screen.Login.route) { backStackEntry ->
-                val registrationSuccess by backStackEntry.savedStateHandle
-                    .getStateFlow("registration_success", false)
-                    .collectAsState()
-
-                LaunchedEffect(registrationSuccess) {
-                    if (registrationSuccess) {
-                        loginViewModel.showRegistrationSuccessMessage()
-                        backStackEntry.savedStateHandle["registration_success"] = false
-                    }
+    LaunchedEffect(isLoggedIn, currentRoute) {
+        if (isLoggedIn) {
+            if (
+                currentRoute == null ||
+                currentRoute == Screen.Login.route ||
+                currentRoute == Screen.Register.route
+            ) {
+                navController.navigate(Screen.TrainingPlans.route) {
+                    popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                    launchSingleTop = true
                 }
-
-                LoginScreen(
-                    viewModel = loginViewModel,
-                    onLoginSuccess = {
-                        navController.navigate(Screen.TrainingPlans.route) {
-                            popUpTo(Screen.Login.route) { inclusive = true }
-                            launchSingleTop = true
-                        }
-                    },
-                    onGoToRegister = {
-                        navController.navigate(Screen.Register.route)
-                    }
-                )
             }
+        } else {
+            val isAuthRoute = currentRoute == Screen.Login.route || currentRoute == Screen.Register.route
 
-            composable(Screen.Register.route) {
-                RegisterScreen(
-                    viewModel = registerViewModel,
-                    onRegisterSuccess = {
-                        navController.previousBackStackEntry
-                            ?.savedStateHandle
-                            ?.set("registration_success", true)
-                        navController.popBackStack()
-                    },
-                    onGoToLogin = { navController.popBackStack() }
-                )
+            if (currentRoute != null && !isAuthRoute) {
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                    launchSingleTop = true
+                }
             }
         }
-        return
     }
 
     NavHost(
         navController = navController,
-        startDestination = Screen.TrainingPlans.route
+        startDestination = Screen.Login.route
     ) {
+        composable(Screen.Login.route) { backStackEntry ->
+            val registrationSuccess by backStackEntry.savedStateHandle
+                .getStateFlow("registration_success", false)
+                .collectAsState()
+
+            LaunchedEffect(registrationSuccess) {
+                if (registrationSuccess) {
+                    loginViewModel.showRegistrationSuccessMessage()
+                    backStackEntry.savedStateHandle["registration_success"] = false
+                }
+            }
+
+            LoginScreen(
+                viewModel = loginViewModel,
+                onGoToRegister = {
+                    navController.navigate(Screen.Register.route)
+                }
+            )
+        }
+
+        composable(Screen.Register.route) {
+            RegisterScreen(
+                viewModel = registerViewModel,
+                onRegisterSuccess = {
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("registration_success", true)
+                    navController.popBackStack()
+                },
+                onGoToLogin = { navController.popBackStack() }
+            )
+        }
+
         composable(Screen.TrainingPlans.route) { backStackEntry ->
             TrainingPlanScreen(
                 backStackEntry = backStackEntry,
@@ -95,13 +108,16 @@ fun AppNavigation(
             )
         }
 
-        composable(Screen.TrainingPlanDetails.route) {
-            val planId = it.arguments?.getString("planId") ?: ""
+        composable(Screen.TrainingPlanDetails.route) { backStackEntry ->
+            val planId = backStackEntry.arguments?.getString("planId") ?: ""
             TrainingPlanDetailsScreen(
                 planId = planId,
                 onBack = { navController.popBackStack() },
                 onWorkoutClick = { workoutId ->
                     navController.navigate(Screen.WorkoutTemplateDetails.createRoute(workoutId))
+                },
+                onPlanDeleted = {
+                    navController.popBackStack()
                 }
             )
         }

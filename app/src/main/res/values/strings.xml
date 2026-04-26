@@ -40,7 +40,6 @@
     <string name="register_badge">Nowe konto</string>
     <string name="register_title">Dołącz do Gymnasios</string>
     <string name="register_subtitle">Załóż konto, aby zacząć korzystać z aplikacji.</string>
-    <string name="register_subittle">Załóż konto, aby zacząć korzystać z aplikacji.</string>
     <string name="register_button">Załóż konto</string>
     <string name="register_action">Załóż konto</string>
     <string name="register_go_to_login">Masz już konto? Zaloguj się</string>
@@ -97,6 +96,12 @@
     <string name="workouts_list_header">Lista workoutów</string>
     <string name="next_workout_badge">Najbliższy workout</string>
     <string name="workout_position">%1$d</string>
+    <string name="rename_plan">Zmień nazwę planu</string>
+    <string name="delete_plan">Usuń plan</string>
+    <string name="rename_plan_title">Zmień nazwę planu treningowego</string>
+    <string name="rename_plan_label">Nazwa planu</string>
+    <string name="delete_plan_title">Usun plan treningowy</string>
+    <string name="delete_plan_confirmation">Jesteś pewny, że chcesz usunąć ten plan?</string>
 
     <!-- Workout details -->
     <string name="workout_badge">Workout</string>
