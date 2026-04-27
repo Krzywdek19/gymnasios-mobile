@@ -3,21 +3,25 @@ package com.krzywdek19.gymnasiosmobile.presentation.trainingplan.details
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.krzywdek19.gymnasiosmobile.core.network.ApiFactory
-import com.krzywdek19.gymnasiosmobile.core.network.RetrofitProvider
 import com.krzywdek19.gymnasiosmobile.data.repository.TrainingPlanRepositoryImpl
+import com.krzywdek19.gymnasiosmobile.data.repository.WorkoutSessionRepositoryImpl
 import com.krzywdek19.gymnasiosmobile.data.repository.WorkoutTemplateRepositoryImpl
 
 class TrainingPlanDetailsViewModelFactory : ViewModelProvider.Factory {
+
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val trainingPlanApi = ApiFactory.trainingPlanApi
         val workoutTemplateApi = ApiFactory.workoutTemplateApi
+        val workoutSessionApi = ApiFactory.workoutSessionApi
 
         val trainingPlanRepository = TrainingPlanRepositoryImpl(trainingPlanApi)
         val workoutTemplateRepository = WorkoutTemplateRepositoryImpl(workoutTemplateApi)
+        val workoutSessionRepository = WorkoutSessionRepositoryImpl(workoutSessionApi)
 
         return TrainingPlanDetailsViewModel(
             repository = trainingPlanRepository,
-            workoutTemplateRepository = workoutTemplateRepository
+            workoutTemplateRepository = workoutTemplateRepository,
+            workoutSessionRepository = workoutSessionRepository
         ) as T
     }
 }

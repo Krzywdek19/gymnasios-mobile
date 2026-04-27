@@ -18,13 +18,17 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
+    <string name="add">Add</string>
     <string name="loading">Loading…</string>
     <string name="retry">Try again</string>
     <string name="close">Close</string>
     <string name="back">Back</string>
+    <string name="menu">Menu</string>
+    <string name="not_available">Not available</string>
+
+    <!-- Auth / Session -->
     <string name="logout">Sign out</string>
     <string name="logout_description">Sign out</string>
-    <string name="menu">Menu</string>
 
     <!-- Auth / Login -->
     <string name="login_title">Sign in</string>
@@ -32,9 +36,6 @@
     <string name="login_button">Sign in</string>
     <string name="login_action">Sign in</string>
     <string name="login_go_to_register">Don’t have an account? Create one</string>
-    <string name="error_login_fields_required">Enter your email and password</string>
-    <string name="error_account_not_activated">Your account is not active. Confirm your registration using the link sent to your email.</string>
-    <string name="error_invalid_email_or_password">Invalid email address or password.</string>
 
     <!-- Auth / Register -->
     <string name="register_badge">New account</string>
@@ -44,17 +45,20 @@
     <string name="register_action">Create account</string>
     <string name="register_go_to_login">Already have an account? Sign in</string>
     <string name="register_success">Account created. Verify your email address and sign in.</string>
-    <string name="error_register_fields_required">Fill in all fields</string>
-    <string name="error_register_password_mismatch">Passwords do not match</string>
-    <string name="error_email_already_taken">This email address is already taken.</string>
-    <string name="error_password_requirements">Password must be at least 8 characters long and contain one uppercase letter, one digit, and one special character.</string>
     <string name="password_requirements_hint">Password: at least 8 characters, 1 uppercase letter, 1 digit, 1 special character.</string>
 
     <!-- Errors / validation -->
     <string name="error_generic">Something went wrong</string>
     <string name="error_login_failed">Sign in failed</string>
+    <string name="error_login_fields_required">Enter your email and password</string>
+    <string name="error_account_not_activated">Your account is not active. Confirm your registration using the link sent to your email.</string>
+    <string name="error_invalid_email_or_password">Invalid email address or password.</string>
     <string name="error_register_failed">Failed to create account</string>
+    <string name="error_register_fields_required">Fill in all fields</string>
+    <string name="error_register_password_mismatch">Passwords do not match</string>
     <string name="error_passwords_do_not_match">Passwords do not match</string>
+    <string name="error_email_already_taken">This email address is already taken.</string>
+    <string name="error_password_requirements">Password must be at least 8 characters long and contain one uppercase letter, one digit, and one special character.</string>
     <string name="error_email_required">Enter your email address</string>
     <string name="error_password_required">Enter your password</string>
     <string name="error_confirm_password_required">Confirm your password</string>
@@ -62,15 +66,16 @@
     <string name="error_invalid_email">Enter a valid email address</string>
 
     <!-- Training plans list -->
+    <string name="training_plans_title">Training plans</string>
     <string name="training_plans_header">Your plans</string>
     <string name="training_plans_subtitle">Manage your training plans</string>
-    <string name="tranining_plans_summary_badge">Overview</string>
     <string name="training_plans_summary_badge">Overview</string>
+    <string name="tranining_plans_summary_badge">Overview</string>
     <string name="training_plans_summary_title">You have %1$d plans ready to use.</string>
     <string name="training_plans_summary_description">Select a plan to view its workouts.</string>
     <string name="training_plans_total">Plans</string>
-    <string name="traninig_workouts_total">Workouts</string>
     <string name="training_workouts_total">Workouts</string>
+    <string name="traninig_workouts_total">Workouts</string>
     <string name="training_plan_empty_title">You don’t have any plans yet</string>
     <string name="training_plan_empty_description">Add your first training plan to get started.</string>
     <string name="fab_add_plan_description">Add training plan</string>
@@ -84,51 +89,108 @@
     <string name="training_plan_name_label">Plan name</string>
     <string name="create_training_plan_button">Create plan</string>
     <string name="create_traininig_plan_button">Create plan</string>
+    <string name="error_training_plan_name_required">Enter a training plan name</string>
+    <string name="error_training_plan_create_failed">Failed to create training plan</string>
 
     <!-- Training plan details -->
     <string name="training_plan_details_title">Training plan</string>
     <string name="training_plan_details_subtitle">Manage workouts and their order</string>
-    <string name="training_plan_status_active">ACTIVE</string>
+    <string name="training_plan_status">Plan status</string>
+    <string name="training_plan_status_active">Active</string>
+    <string name="training_plan_status_inactive">Inactive</string>
+    <string name="training_plan_status_archived">Archived</string>
     <string name="training_plan_status_ready">Ready</string>
     <string name="workout_count_label">Workouts</string>
     <string name="next_workout_metric">Next workout</string>
-    <string name="add_workout_button">Add workout</string>
-    <string name="workouts_list_header">Workout list</string>
+    <string name="next_workout_label">Next workout</string>
     <string name="next_workout_badge">Next workout</string>
-    <string name="workout_position">%1$d</string>
+    <string name="workouts_list_header">Workout list</string>
+    <string name="no_workouts_in_plan">No workouts in this plan</string>
+    <string name="add_first_workout_hint">Add your first workout to start building the plan.</string>
     <string name="rename_plan">Rename plan</string>
     <string name="delete_plan">Delete plan</string>
     <string name="rename_plan_title">Rename training plan</string>
     <string name="rename_plan_label">Plan name</string>
     <string name="delete_plan_title">Delete training plan</string>
     <string name="delete_plan_confirmation">Are you sure you want to delete this training plan?</string>
+    <string name="activate_training_plan">Activate plan</string>
+    <string name="start_workout_session">Start workout</string>
+    <string name="continue_workout_session">Continue workout</string>
 
-    <!-- Workout details -->
+    <!-- Workout template -->
     <string name="workout_badge">Workout</string>
-    <string name="exercise_count_label">Exercises</string>
+    <string name="workout_name">Workout name</string>
+    <string name="workout_name_metric">Workout name</string>
+    <string name="new_workout">New workout</string>
+    <string name="other_workouts">Other workouts</string>
+    <string name="add_workout">Add workout</string>
+    <string name="add_workout_button">Add workout</string>
+    <string name="edit_workout">Edit workout</string>
+    <string name="delete_workout">Delete workout</string>
+    <string name="rename_workout_label">Workout name</string>
+    <string name="rename_workout_title">Rename workout</string>
+    <string name="workout_order">Workout order</string>
+    <string name="move_workout_down">Move workout down</string>
+    <string name="workout_position">%1$d</string>
+    <string name="workout_summary_badge">Overview</string>
+    <string name="workout_details_title_fallback">Workout details</string>
+    <string name="workout_details_subtitle">Manage exercises in this workout</string>
     <string name="workout_type_label">Type</string>
     <string name="workout_ready">Ready</string>
-    <string name="add_exercise_button">Add exercise</string>
-    <string name="exercise_list_header">Exercise list</string>
-    <string name="exercise_position">Position %1$d</string>
+    <string name="error_workout_details_failed">Failed to load workout details</string>
 
-    <!-- Exercise -->
+    <!-- Exercise template -->
+    <string name="exercise_count_label">Exercises</string>
+    <string name="exercise_list_title">Exercise list</string>
+    <string name="exercise_list_header">Exercise list</string>
+    <string name="exercise_empty_title">No exercises yet</string>
+    <string name="exercise_empty_description">Add the first exercise to this workout.</string>
+    <string name="exercise_position">Position %1$d</string>
+    <string name="exercise_position_label">Position</string>
+    <string name="exercise_sets_reps_format">%1$d sets • %2$s reps</string>
+    <string name="no_exercises_yet">No exercises yet</string>
+    <string name="add_exercise">Add exercise</string>
+    <string name="add_exercise_button">Add exercise</string>
+    <string name="add_exercise_title">Add exercise</string>
     <string name="sets_label">Sets</string>
+    <string name="sets_count_label">Number of sets</string>
     <string name="reps_label">Reps</string>
     <string name="notes_label">Notes</string>
     <string name="to_failure_label">Last set to failure</string>
-    <string name="exercise_empty_title">No exercises yet</string>
-    <string name="exercise_empty_description">Add the first exercise to this workout.</string>
+    <string name="error_exercise_name_required">Enter an exercise name</string>
+    <string name="error_sets_count_invalid">Enter a valid number of sets</string>
+    <string name="error_reps_required">Enter the number of reps</string>
+    <string name="error_saving_exercise">Failed to save exercise</string>
 
     <!-- Create exercise -->
     <string name="create_exercise_title">New exercise</string>
     <string name="create_exercise_subtitle">Fill in the exercise details.</string>
     <string name="exercise_name_label">Exercise name</string>
     <string name="exercise_name_hint">E.g. Bench press</string>
-    <string name="sets_count_label">Number of sets</string>
     <string name="reps_hint">E.g. 8</string>
     <string name="notes_hint">Optional notes</string>
     <string name="create_exercise_button">Add exercise</string>
+
+    <!-- Workout session -->
+    <string name="workout_session_title">Workout session</string>
+    <string name="workout_session_subtitle">Track your sets and results</string>
+    <string name="workout_session_in_progress">Workout in progress</string>
+    <string name="finish_workout_session">Finish workout</string>
+    <string name="exercises_count_label">Exercises</string>
+    <string name="completed_sets_label">Completed sets</string>
+    <string name="no_exercises_in_session">No exercises in this session</string>
+    <string name="no_exercises_in_session_description">This session has no generated exercises.</string>
+    <string name="set_number">Set %1$d</string>
+    <string name="set_completed">Completed</string>
+    <string name="set_not_completed">Not completed</string>
+    <string name="save_set">Save set</string>
+    <string name="weight_label">Weight</string>
+    <string name="rir_label">RIR</string>
+    <string name="error_workout_session_load_failed">Failed to load workout session</string>
+    <string name="error_start_workout_session_failed">Failed to start workout</string>
+    <string name="error_finish_workout_session_failed">Failed to finish workout</string>
+    <string name="error_save_set_failed">Failed to save set</string>
+    <string name="error_invalid_set_values">Enter valid set values</string>
 
     <!-- Content descriptions -->
     <string name="edit_workout_description">Edit workout</string>
@@ -137,38 +199,4 @@
     <string name="edit_exercise_description">Edit exercise</string>
     <string name="delete_exercise_description">Delete exercise</string>
 
-    <string name="no_workouts_in_plan">No workouts in this plan</string>
-    <string name="add_first_workout_hint">Add your first workout to start building the plan.</string>
-    <string name="rename_workout_label">Rename workout</string>
-    <string name="rename_workout_title">Rename workout</string>
-    <string name="add">Add</string>
-    <string name="workout_name">Workout name</string>
-    <string name="new_workout">New workout</string>
-    <string name="other_workouts">Other workouts</string>
-    <string name="add_workout">Add workout</string>
-    <string name="edit_workout">Edit workout</string>
-    <string name="delete_workout">Delete workout</string>
-    <string name="workout_order">Workout order</string>
-    <string name="move_workout_down">Move workout down</string>
-    <string name="next_workout_label">Next workout</string>
-    <string name="add_exercise_title">Add exercise</string>
-    <string name="error_exercise_name_required">Enter an exercise name</string>
-    <string name="error_sets_count_invalid">Enter a valid number of sets</string>
-    <string name="error_reps_required">Enter the number of reps</string>
-    <string name="error_saving_exercise">Failed to save exercise</string>
-    <string name="training_plans_title">Training plans</string>
-    <string name="error_training_plan_name_required">Enter a training plan name</string>
-    <string name="error_training_plan_create_failed">Failed to create training plan</string>
-    <string name="not_available">Not available</string>
-    <string name="training_plan_status">Plan status</string>
-    <string name="exercise_sets_reps_format">%1$d sets • %2$s reps</string>
-    <string name="exercise_position_label">Position</string>
-    <string name="no_exercises_yet">No exercises yet</string>
-    <string name="exercise_list_title">Exercise list</string>
-    <string name="add_exercise">Add exercise</string>
-    <string name="workout_name_metric">Workout name</string>
-    <string name="workout_summary_badge">Overview</string>
-    <string name="workout_details_subtitle">Manage exercises in this workout</string>
-    <string name="workout_details_title_fallback">Workout details</string>
-    <string name="error_workout_details_failed">Failed to load workout details</string>
 </resources>

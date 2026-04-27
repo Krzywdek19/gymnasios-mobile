@@ -57,6 +57,7 @@ fun TrainingPlanDetailsScreen(
     planId: String,
     onBack: () -> Unit,
     onWorkoutClick: (String) -> Unit,
+    onWorkoutSessionReady: (String) -> Unit,
     onPlanDeleted: () -> Unit,
     viewModel: TrainingPlanDetailsViewModel = viewModel(
         factory = TrainingPlanDetailsViewModelFactory()
@@ -141,6 +142,8 @@ fun TrainingPlanDetailsScreen(
 
                 is TrainingPlanDetailsUiState.Success -> {
                     val plan = state.plan
+                    val isActivePlan = plan.status.equals("ACTIVE", ignoreCase = true)
+                    val hasActiveWorkoutSession = state.activeWorkoutSessionId != null
 
                     val initialWorkouts = remember(plan.id, plan.workouts) {
                         plan.workouts.sortedBy { it.orderIndex }
@@ -216,6 +219,30 @@ fun TrainingPlanDetailsScreen(
                                         modifier = Modifier.weight(1f)
                                     )
                                 }
+                                val actionButtonText = when {
+                                    !isActivePlan -> stringResource(R.string.activate_training_plan)
+                                    hasActiveWorkoutSession -> stringResource(R.string.continue_workout_session)
+                                    else -> stringResource(R.string.start_workout_session)
+                                }
+
+                                val canStartWorkout = reorderedWorkouts.isNotEmpty() || hasActiveWorkoutSession
+                                val isActionLoading = state.isActivatingPlan || state.isStartingWorkoutSession
+
+                                PrimaryButton(
+                                    text = actionButtonText,
+                                    onClick = {
+                                        if (isActivePlan) {
+                                            viewModel.startOrContinueWorkout(
+                                                onWorkoutSessionReady = onWorkoutSessionReady
+                                            )
+                                        } else {
+                                            viewModel.activatePlan()
+                                        }
+                                    },
+                                    enabled = !isActionLoading && (!isActivePlan || canStartWorkout),
+                                    isLoading = isActionLoading,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
 
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),

@@ -9,6 +9,9 @@ sealed interface TrainingPlanDetailsUiState {
 
     data class Success(
         val plan: TrainingPlan,
+        val activeWorkoutSessionId: String? = null,
+        val isActivatingPlan: Boolean = false,
+        val isStartingWorkoutSession: Boolean = false,
         @StringRes val actionErrorMessageRes: Int? = null
     ) : TrainingPlanDetailsUiState
 

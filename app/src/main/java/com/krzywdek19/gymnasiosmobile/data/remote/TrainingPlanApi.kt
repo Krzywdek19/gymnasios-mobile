@@ -20,6 +20,14 @@ interface TrainingPlanApi {
         @Path("planId") planId: String
     ): TrainingPlanDto
 
+    @GET("api/v1/training-plans/active")
+    suspend fun getActiveTrainingPlan(): TrainingPlanDto
+
+    @PUT("api/v1/training-plans/{planId}/activate")
+    suspend fun activateTrainingPlan(
+        @Path("planId") planId: String
+    ): TrainingPlanDto
+
     @POST("api/v1/training-plans")
     suspend fun createTrainingPlan(
         @Body request: CreateTrainingPlanRequest

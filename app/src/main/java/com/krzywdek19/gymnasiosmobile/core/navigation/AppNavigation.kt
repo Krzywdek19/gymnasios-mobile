@@ -18,6 +18,7 @@ import com.krzywdek19.gymnasiosmobile.presentation.exercisetemplate.create.Creat
 import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.create.CreateTrainingPlanScreen
 import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.details.TrainingPlanDetailsScreen
 import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.list.TrainingPlanScreen
+import com.krzywdek19.gymnasiosmobile.presentation.workoutsession.active.WorkoutSessionScreen
 import com.krzywdek19.gymnasiosmobile.presentation.workouttemplate.details.WorkoutTemplateDetailsScreen
 
 @Composable
@@ -116,9 +117,21 @@ fun AppNavigation(
                 onWorkoutClick = { workoutId ->
                     navController.navigate(Screen.WorkoutTemplateDetails.createRoute(workoutId))
                 },
+                onWorkoutSessionReady = { workoutSessionId ->
+                    navController.navigate(Screen.WorkoutSession.createRoute(workoutSessionId))
+                },
                 onPlanDeleted = {
                     navController.popBackStack()
                 }
+            )
+        }
+
+        composable(Screen.WorkoutSession.route) { backStackEntry ->
+            val workoutSessionId = backStackEntry.arguments?.getString("workoutSessionId") ?: ""
+
+            WorkoutSessionScreen(
+                workoutSessionId = workoutSessionId,
+                onBack = { navController.popBackStack() }
             )
         }
 

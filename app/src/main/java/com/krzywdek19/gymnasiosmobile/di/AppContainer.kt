@@ -7,14 +7,17 @@ import com.krzywdek19.gymnasiosmobile.data.repository.AuthRepository
 import com.krzywdek19.gymnasiosmobile.data.repository.ExerciseTemplateRepositoryImpl
 import com.krzywdek19.gymnasiosmobile.data.repository.TokenStorage
 import com.krzywdek19.gymnasiosmobile.data.repository.TrainingPlanRepositoryImpl
+import com.krzywdek19.gymnasiosmobile.data.repository.WorkoutSessionRepositoryImpl
 import com.krzywdek19.gymnasiosmobile.data.repository.WorkoutTemplateRepositoryImpl
 import com.krzywdek19.gymnasiosmobile.domain.repository.ExerciseTemplateRepository
 import com.krzywdek19.gymnasiosmobile.domain.repository.TrainingPlanRepository
+import com.krzywdek19.gymnasiosmobile.domain.repository.WorkoutSessionRepository
 import com.krzywdek19.gymnasiosmobile.domain.repository.WorkoutTemplateRepository
 
 object AppContainer {
 
     private lateinit var tokenStorage: TokenStorage
+
     lateinit var sessionManager: SessionManager
         private set
 
@@ -45,5 +48,9 @@ object AppContainer {
 
     val exerciseTemplateRepository: ExerciseTemplateRepository by lazy {
         ExerciseTemplateRepositoryImpl(ApiFactory.exerciseTemplateApi)
+    }
+
+    val workoutSessionRepository: WorkoutSessionRepository by lazy {
+        WorkoutSessionRepositoryImpl(ApiFactory.workoutSessionApi)
     }
 }

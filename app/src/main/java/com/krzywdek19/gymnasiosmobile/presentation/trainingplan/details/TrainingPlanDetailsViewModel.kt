@@ -6,6 +6,7 @@ import com.krzywdek19.gymnasiosmobile.R
 import com.krzywdek19.gymnasiosmobile.domain.model.TrainingPlan
 import com.krzywdek19.gymnasiosmobile.domain.model.WorkoutTemplate
 import com.krzywdek19.gymnasiosmobile.domain.repository.TrainingPlanRepository
+import com.krzywdek19.gymnasiosmobile.domain.repository.WorkoutSessionRepository
 import com.krzywdek19.gymnasiosmobile.domain.repository.WorkoutTemplateRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +15,8 @@ import kotlinx.coroutines.launch
 
 class TrainingPlanDetailsViewModel(
     private val repository: TrainingPlanRepository,
-    private val workoutTemplateRepository: WorkoutTemplateRepository
+    private val workoutTemplateRepository: WorkoutTemplateRepository,
+    private val workoutSessionRepository: WorkoutSessionRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<TrainingPlanDetailsUiState>(
@@ -37,10 +39,88 @@ class TrainingPlanDetailsViewModel(
 
             try {
                 val plan = repository.getTrainingPlanById(id)
-                _uiState.value = TrainingPlanDetailsUiState.Success(plan)
+                val activeSession = workoutSessionRepository
+                    .getActiveWorkoutSession()
+                    .getOrNull()
+
+                _uiState.value = TrainingPlanDetailsUiState.Success(
+                    plan = plan,
+                    activeWorkoutSessionId = activeSession?.id
+                )
             } catch (_: Exception) {
                 _uiState.value = TrainingPlanDetailsUiState.Error(
                     R.string.error_generic
+                )
+            }
+        }
+    }
+
+    fun activatePlan() {
+        val currentState = currentSuccessOrNull() ?: return
+        val currentPlan = currentState.plan
+
+        if (currentPlan.status == "ACTIVE") return
+
+        _uiState.value = currentState.copy(
+            isActivatingPlan = true,
+            actionErrorMessageRes = null
+        )
+
+        viewModelScope.launch {
+            try {
+                val activatedPlan = repository.activateTrainingPlan(currentPlan.id)
+
+                _uiState.value = currentState.copy(
+                    plan = activatedPlan,
+                    isActivatingPlan = false,
+                    actionErrorMessageRes = null
+                )
+            } catch (_: Exception) {
+                _uiState.value = currentState.copy(
+                    isActivatingPlan = false,
+                    actionErrorMessageRes = R.string.error_generic
+                )
+            }
+        }
+    }
+
+    fun startOrContinueWorkout(
+        onWorkoutSessionReady: (String) -> Unit
+    ) {
+        val currentState = currentSuccessOrNull() ?: return
+        val currentPlan = currentState.plan
+
+        if (currentPlan.status != "ACTIVE") return
+
+        currentState.activeWorkoutSessionId?.let { sessionId ->
+            onWorkoutSessionReady(sessionId)
+            return
+        }
+
+        _uiState.value = currentState.copy(
+            isStartingWorkoutSession = true,
+            actionErrorMessageRes = null
+        )
+
+        viewModelScope.launch {
+            val stateBeforeRequest = currentSuccessOrNull() ?: return@launch
+
+            try {
+                val startedSession = workoutSessionRepository
+                    .startNextWorkoutSession()
+                    .getOrThrow()
+
+                _uiState.value = stateBeforeRequest.copy(
+                    activeWorkoutSessionId = startedSession.id,
+                    isStartingWorkoutSession = false,
+                    actionErrorMessageRes = null
+                )
+
+                onWorkoutSessionReady(startedSession.id)
+            } catch (_: Exception) {
+                _uiState.value = stateBeforeRequest.copy(
+                    isStartingWorkoutSession = false,
+                    actionErrorMessageRes = R.string.error_generic
                 )
             }
         }
@@ -62,7 +142,11 @@ class TrainingPlanDetailsViewModel(
                 )
                 refreshPlan(currentPlan.id, showLoading = false)
             } catch (_: Exception) {
-                _uiState.value = TrainingPlanDetailsUiState.Success(currentPlan)
+                currentSuccessOrNull()?.let { currentState ->
+                    _uiState.value = currentState.copy(
+                        actionErrorMessageRes = R.string.error_generic
+                    )
+                }
             }
         }
     }
@@ -83,7 +167,11 @@ class TrainingPlanDetailsViewModel(
                 )
                 refreshPlan(currentPlan.id, showLoading = false)
             } catch (_: Exception) {
-                _uiState.value = TrainingPlanDetailsUiState.Success(currentPlan)
+                currentSuccessOrNull()?.let { currentState ->
+                    _uiState.value = currentState.copy(
+                        actionErrorMessageRes = R.string.error_generic
+                    )
+                }
             }
         }
     }
@@ -107,7 +195,11 @@ class TrainingPlanDetailsViewModel(
                 )
                 refreshPlan(currentPlan.id, showLoading = false)
             } catch (_: Exception) {
-                _uiState.value = TrainingPlanDetailsUiState.Success(currentPlan)
+                currentSuccessOrNull()?.let { currentState ->
+                    _uiState.value = currentState.copy(
+                        actionErrorMessageRes = R.string.error_generic
+                    )
+                }
             }
         }
     }
@@ -121,17 +213,13 @@ class TrainingPlanDetailsViewModel(
                 workoutTemplateRepository.deleteWorkoutTemplateById(workoutId)
                 refreshPlan(currentPlan.id, showLoading = false)
             } catch (_: Exception) {
-                _uiState.value = TrainingPlanDetailsUiState.Success(currentPlan)
+                currentSuccessOrNull()?.let { currentState ->
+                    _uiState.value = currentState.copy(
+                        actionErrorMessageRes = R.string.error_generic
+                    )
+                }
             }
         }
-    }
-
-    private fun currentPlanOrNull(): TrainingPlan? {
-        return (_uiState.value as? TrainingPlanDetailsUiState.Success)?.plan
-    }
-
-    private fun TrainingPlan.findWorkout(workoutId: String): WorkoutTemplate? {
-        return workouts.firstOrNull { it.id == workoutId }
     }
 
     fun renamePlan(
@@ -145,8 +233,12 @@ class TrainingPlanDetailsViewModel(
             try {
                 repository.updateTrainingPlan(planId, trimmedName)
                 refreshPlan(planId, showLoading = false)
-            } catch (e: Exception) {
-                _uiState.value = TrainingPlanDetailsUiState.Error(R.string.error_generic)
+            } catch (_: Exception) {
+                currentSuccessOrNull()?.let { currentState ->
+                    _uiState.value = currentState.copy(
+                        actionErrorMessageRes = R.string.error_generic
+                    )
+                }
             }
         }
     }
@@ -159,10 +251,27 @@ class TrainingPlanDetailsViewModel(
             try {
                 repository.deleteTrainingPlan(planId)
                 onDeleted()
-            } catch (e: Exception) {
-                _uiState.value = TrainingPlanDetailsUiState.Error(R.string.error_generic)
+            } catch (_: Exception) {
+                currentSuccessOrNull()?.let { currentState ->
+                    _uiState.value = currentState.copy(
+                        actionErrorMessageRes = R.string.error_generic
+                    )
+                } ?: run {
+                    _uiState.value = TrainingPlanDetailsUiState.Error(R.string.error_generic)
+                }
             }
         }
     }
-}
 
+    private fun currentSuccessOrNull(): TrainingPlanDetailsUiState.Success? {
+        return _uiState.value as? TrainingPlanDetailsUiState.Success
+    }
+
+    private fun currentPlanOrNull(): TrainingPlan? {
+        return currentSuccessOrNull()?.plan
+    }
+
+    private fun TrainingPlan.findWorkout(workoutId: String): WorkoutTemplate? {
+        return workouts.firstOrNull { it.id == workoutId }
+    }
+}
