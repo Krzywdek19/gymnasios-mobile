@@ -58,6 +58,7 @@ fun TrainingPlanDetailsScreen(
     onBack: () -> Unit,
     onWorkoutClick: (String) -> Unit,
     onWorkoutSessionReady: (String) -> Unit,
+    onWorkoutHistoryClick: () -> Unit,
     onPlanDeleted: () -> Unit,
     viewModel: TrainingPlanDetailsViewModel = viewModel(
         factory = TrainingPlanDetailsViewModelFactory()
@@ -243,6 +244,15 @@ fun TrainingPlanDetailsScreen(
                                     isLoading = isActionLoading,
                                     modifier = Modifier.fillMaxWidth()
                                 )
+
+                                TextButton(
+                                    onClick = onWorkoutHistoryClick,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.workout_session_history_title)
+                                    )
+                                }
 
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),

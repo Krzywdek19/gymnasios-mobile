@@ -19,6 +19,7 @@ import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.create.CreateTra
 import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.details.TrainingPlanDetailsScreen
 import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.list.TrainingPlanScreen
 import com.krzywdek19.gymnasiosmobile.presentation.workoutsession.active.WorkoutSessionScreen
+import com.krzywdek19.gymnasiosmobile.presentation.workoutsession.history.WorkoutSessionHistoryScreen
 import com.krzywdek19.gymnasiosmobile.presentation.workouttemplate.details.WorkoutTemplateDetailsScreen
 
 @Composable
@@ -120,6 +121,9 @@ fun AppNavigation(
                 onWorkoutSessionReady = { workoutSessionId ->
                     navController.navigate(Screen.WorkoutSession.createRoute(workoutSessionId))
                 },
+                onWorkoutHistoryClick = {
+                    navController.navigate(Screen.WorkoutSessionHistory.route)
+                },
                 onPlanDeleted = {
                     navController.popBackStack()
                 }
@@ -132,6 +136,15 @@ fun AppNavigation(
             WorkoutSessionScreen(
                 workoutSessionId = workoutSessionId,
                 onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.WorkoutSessionHistory.route) {
+            WorkoutSessionHistoryScreen(
+                onBack = { navController.popBackStack() },
+                onSessionClick = { workoutSessionId ->
+                    navController.navigate(Screen.WorkoutSession.createRoute(workoutSessionId))
+                }
             )
         }
 

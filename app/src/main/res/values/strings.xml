@@ -199,4 +199,12 @@
     <string name="edit_exercise_description">Edytuj ćwiczenie</string>
     <string name="delete_exercise_description">Usuń ćwiczenie</string>
 
+    <string name="workout_session_history_title">Historia treningów</string>
+    <string name="workout_session_history_subtitle">Przeglądaj zakończone i aktywne sesje</string>
+    <string name="error_workout_session_history_load_failed">Nie udało się wczytać historii treningów</string>
+    <string name="workout_session_history_empty_title">Brak historii treningów</string>
+    <string name="workout_session_history_empty_description">Zakończ pierwszy trening, aby zobaczyć go tutaj.</string>
+    <string name="active_session_label">Aktywna</string>
+    <string name="finished_session_label">Zakończona</string>
+
 </resources>
