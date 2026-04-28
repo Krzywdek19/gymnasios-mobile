@@ -1,8 +1,8 @@
-package com.krzywdek19.gymnasiosmobile.core.navigation
-
 sealed class Screen(val route: String) {
     data object Login : Screen("login")
     data object Register : Screen("register")
+
+    data object Dashboard : Screen("dashboard")
 
     data object TrainingPlans : Screen("training_plans")
     data object CreateTrainingPlan : Screen("create_training_plan")

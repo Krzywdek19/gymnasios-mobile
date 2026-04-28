@@ -14,6 +14,7 @@ import com.krzywdek19.gymnasiosmobile.presentation.auth.login.LoginScreen
 import com.krzywdek19.gymnasiosmobile.presentation.auth.login.LoginViewModel
 import com.krzywdek19.gymnasiosmobile.presentation.auth.register.RegisterScreen
 import com.krzywdek19.gymnasiosmobile.presentation.auth.register.RegisterViewModel
+import com.krzywdek19.gymnasiosmobile.presentation.dashboard.DashboardScreen
 import com.krzywdek19.gymnasiosmobile.presentation.exercisetemplate.create.CreateExerciseTemplateScreen
 import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.create.CreateTrainingPlanScreen
 import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.details.TrainingPlanDetailsScreen
@@ -41,7 +42,7 @@ fun AppNavigation(
                 currentRoute == Screen.Login.route ||
                 currentRoute == Screen.Register.route
             ) {
-                navController.navigate(Screen.TrainingPlans.route) {
+                navController.navigate(Screen.Dashboard.route) {
                     popUpTo(navController.graph.startDestinationId) { inclusive = true }
                     launchSingleTop = true
                 }
@@ -92,6 +93,20 @@ fun AppNavigation(
                     navController.popBackStack()
                 },
                 onGoToLogin = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.Dashboard.route) {
+            DashboardScreen(
+                onTrainingPlansClick = {
+                    navController.navigate(Screen.TrainingPlans.route)
+                },
+                onWorkoutHistoryClick = {
+                    navController.navigate(Screen.WorkoutSessionHistory.route)
+                },
+                onWorkoutSessionReady = { workoutSessionId ->
+                    navController.navigate(Screen.WorkoutSession.createRoute(workoutSessionId))
+                }
             )
         }
 

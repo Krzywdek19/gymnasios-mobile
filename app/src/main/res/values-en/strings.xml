@@ -206,4 +206,10 @@
     <string name="workout_session_history_empty_description">Finish your first workout to see it here.</string>
     <string name="active_session_label">Active</string>
     <string name="finished_session_label">Finished</string>
+
+    <string name="error_dashboard_load_failed">Failed to load dashboard</string>
+    <string name="dashboard_title">Gymnasios</string>
+    <string name="dashboard_subtitle">Your training dashboard</string>
+    <string name="active_plan_label">Active plan</string>
+    <string name="current_workout_label">Current workout</string>
 </resources>

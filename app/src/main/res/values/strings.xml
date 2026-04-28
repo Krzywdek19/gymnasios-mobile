@@ -207,4 +207,10 @@
     <string name="active_session_label">Aktywna</string>
     <string name="finished_session_label">Zakończona</string>
 
+    <string name="error_dashboard_load_failed">Nie udało się wczytać ekranu głównego</string>
+    <string name="dashboard_title">Gymnasios</string>
+    <string name="dashboard_subtitle">Twój panel treningowy</string>
+    <string name="active_plan_label">Aktywny plan</string>
+    <string name="current_workout_label">Aktualny trening</string>
+
 </resources>
