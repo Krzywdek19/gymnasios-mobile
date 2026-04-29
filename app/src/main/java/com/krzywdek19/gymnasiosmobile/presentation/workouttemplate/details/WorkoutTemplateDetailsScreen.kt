@@ -48,6 +48,7 @@ import com.krzywdek19.gymnasiosmobile.core.ui.components.AppGradientBackground
 import com.krzywdek19.gymnasiosmobile.core.ui.components.AppSectionHeader
 import com.krzywdek19.gymnasiosmobile.core.ui.components.AppTopBar
 import com.krzywdek19.gymnasiosmobile.core.ui.components.EmptyStateCard
+import com.krzywdek19.gymnasiosmobile.core.ui.components.LogoutAction
 import com.krzywdek19.gymnasiosmobile.core.ui.components.MetricTile
 import com.krzywdek19.gymnasiosmobile.core.ui.components.PrimaryButton
 import com.krzywdek19.gymnasiosmobile.di.AppContainer
@@ -65,6 +66,7 @@ private data class PendingExerciseReorder(
 fun WorkoutTemplateDetailsScreen(
     workoutId: String,
     onBack: () -> Unit,
+    onLogoutClick: () -> Unit,
     onAddExerciseClick: (String) -> Unit,
     backStackEntry: NavBackStackEntry
 ) {
@@ -106,7 +108,10 @@ fun WorkoutTemplateDetailsScreen(
                 subtitle = stringResource(R.string.workout_details_subtitle),
                 navigationIcon = Icons.AutoMirrored.Filled.ArrowBack,
                 navigationContentDescription = stringResource(R.string.back),
-                onNavigationClick = onBack
+                onNavigationClick = onBack,
+                actions = {
+                    LogoutAction(onLogoutClick = onLogoutClick)
+                }
             )
         },
         containerColor = androidx.compose.ui.graphics.Color.Transparent

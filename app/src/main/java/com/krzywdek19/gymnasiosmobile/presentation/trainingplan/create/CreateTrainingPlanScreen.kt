@@ -23,6 +23,7 @@ import com.krzywdek19.gymnasiosmobile.core.ui.components.AppCard
 import com.krzywdek19.gymnasiosmobile.core.ui.components.AppGradientBackground
 import com.krzywdek19.gymnasiosmobile.core.ui.components.AppTextField
 import com.krzywdek19.gymnasiosmobile.core.ui.components.AppTopBar
+import com.krzywdek19.gymnasiosmobile.core.ui.components.LogoutAction
 import com.krzywdek19.gymnasiosmobile.core.ui.components.PrimaryButton
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,6 +31,7 @@ import com.krzywdek19.gymnasiosmobile.core.ui.components.PrimaryButton
 fun CreateTrainingPlanScreen(
     onSave: () -> Unit,
     onBack: () -> Unit,
+    onLogoutClick: () -> Unit,
     viewModel: CreateTrainingPlanViewModel = viewModel(
         factory = CreateTrainingPlanViewModelFactory()
     )
@@ -48,7 +50,10 @@ fun CreateTrainingPlanScreen(
                 subtitle = stringResource(R.string.create_training_plan_subtitle),
                 navigationIcon = Icons.AutoMirrored.Filled.ArrowBack,
                 navigationContentDescription = stringResource(R.string.back),
-                onNavigationClick = onBack
+                onNavigationClick = onBack,
+                actions = {
+                    LogoutAction(onLogoutClick = onLogoutClick)
+                }
             )
         },
         containerColor = androidx.compose.ui.graphics.Color.Transparent

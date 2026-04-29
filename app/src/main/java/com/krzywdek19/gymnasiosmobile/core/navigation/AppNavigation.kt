@@ -106,6 +106,9 @@ fun AppNavigation(
                 },
                 onWorkoutSessionReady = { workoutSessionId ->
                     navController.navigate(Screen.WorkoutSession.createRoute(workoutSessionId))
+                },
+                onLogoutClick = {
+                    authRepository.logout()
                 }
             )
         }
@@ -118,6 +121,12 @@ fun AppNavigation(
                 },
                 onAddClick = {
                     navController.navigate(Screen.CreateTrainingPlan.route)
+                },
+                onBackToDashboard = {
+                    navController.popBackStack(
+                        route = Screen.Dashboard.route,
+                        inclusive = false
+                    )
                 },
                 onLogoutClick = {
                     authRepository.logout()
@@ -141,7 +150,11 @@ fun AppNavigation(
                 },
                 onPlanDeleted = {
                     navController.popBackStack()
+                },
+                onLogoutClick = {
+                    authRepository.logout()
                 }
+
             )
         }
 
@@ -150,7 +163,10 @@ fun AppNavigation(
 
             WorkoutSessionScreen(
                 workoutSessionId = workoutSessionId,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onLogoutClick = {
+                    authRepository.logout()
+                }
             )
         }
 
@@ -159,6 +175,9 @@ fun AppNavigation(
                 onBack = { navController.popBackStack() },
                 onSessionClick = { workoutSessionId ->
                     navController.navigate(Screen.WorkoutSession.createRoute(workoutSessionId))
+                },
+                onLogoutClick = {
+                    authRepository.logout()
                 }
             )
         }
@@ -171,6 +190,9 @@ fun AppNavigation(
                         ?.savedStateHandle
                         ?.set("plan_created", true)
                     navController.popBackStack()
+                },
+                onLogoutClick = {
+                    authRepository.logout()
                 }
             )
         }
@@ -183,6 +205,9 @@ fun AppNavigation(
                 onBack = { navController.popBackStack() },
                 onAddExerciseClick = { templateId ->
                     navController.navigate(Screen.CreateExerciseTemplate.createRoute(templateId))
+                },
+                onLogoutClick = {
+                    authRepository.logout()
                 }
             )
         }

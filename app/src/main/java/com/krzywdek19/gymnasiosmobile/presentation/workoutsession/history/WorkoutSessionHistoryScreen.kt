@@ -33,6 +33,7 @@ import com.krzywdek19.gymnasiosmobile.core.ui.components.AppCard
 import com.krzywdek19.gymnasiosmobile.core.ui.components.AppGradientBackground
 import com.krzywdek19.gymnasiosmobile.core.ui.components.AppTopBar
 import com.krzywdek19.gymnasiosmobile.core.ui.components.EmptyStateCard
+import com.krzywdek19.gymnasiosmobile.core.ui.components.LogoutAction
 import com.krzywdek19.gymnasiosmobile.core.ui.components.MetricTile
 import com.krzywdek19.gymnasiosmobile.domain.model.WorkoutSession
 import com.krzywdek19.gymnasiosmobile.domain.model.WorkoutSessionStatus
@@ -41,6 +42,7 @@ import com.krzywdek19.gymnasiosmobile.domain.model.WorkoutSessionStatus
 fun WorkoutSessionHistoryScreen(
     onBack: () -> Unit,
     onSessionClick: (String) -> Unit,
+    onLogoutClick: () -> Unit,
     viewModel: WorkoutSessionHistoryViewModel = viewModel(
         factory = WorkoutSessionHistoryViewModelFactory()
     )
@@ -61,7 +63,10 @@ fun WorkoutSessionHistoryScreen(
                     subtitle = stringResource(R.string.workout_session_history_subtitle),
                     navigationIcon = Icons.AutoMirrored.Filled.ArrowBack,
                     navigationContentDescription = stringResource(R.string.back),
-                    onNavigationClick = onBack
+                    onNavigationClick = onBack,
+                    actions = {
+                        LogoutAction(onLogoutClick = onLogoutClick)
+                    }
                 )
             }
         ) { paddingValues ->

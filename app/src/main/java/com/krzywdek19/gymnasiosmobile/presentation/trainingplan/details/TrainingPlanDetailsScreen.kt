@@ -40,6 +40,7 @@ import com.krzywdek19.gymnasiosmobile.core.ui.components.AppGradientBackground
 import com.krzywdek19.gymnasiosmobile.core.ui.components.AppSectionHeader
 import com.krzywdek19.gymnasiosmobile.core.ui.components.AppTopBar
 import com.krzywdek19.gymnasiosmobile.core.ui.components.EmptyStateCard
+import com.krzywdek19.gymnasiosmobile.core.ui.components.LogoutAction
 import com.krzywdek19.gymnasiosmobile.core.ui.components.MetricTile
 import com.krzywdek19.gymnasiosmobile.core.ui.components.PrimaryButton
 import com.krzywdek19.gymnasiosmobile.presentation.trainingplan.details.components.WorkoutCard
@@ -59,6 +60,7 @@ fun TrainingPlanDetailsScreen(
     onWorkoutClick: (String) -> Unit,
     onWorkoutSessionReady: (String) -> Unit,
     onWorkoutHistoryClick: () -> Unit,
+    onLogoutClick: () -> Unit,
     onPlanDeleted: () -> Unit,
     viewModel: TrainingPlanDetailsViewModel = viewModel(
         factory = TrainingPlanDetailsViewModelFactory()
@@ -92,7 +94,10 @@ fun TrainingPlanDetailsScreen(
                 subtitle = stringResource(R.string.training_plan_details_subtitle),
                 navigationIcon = Icons.AutoMirrored.Filled.ArrowBack,
                 navigationContentDescription = stringResource(R.string.back),
-                onNavigationClick = onBack
+                onNavigationClick = onBack,
+                actions = {
+                    LogoutAction(onLogoutClick = onLogoutClick)
+                }
             )
         },
         bottomBar = {

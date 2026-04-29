@@ -26,6 +26,7 @@ import com.krzywdek19.gymnasiosmobile.core.ui.components.AppCard
 import com.krzywdek19.gymnasiosmobile.core.ui.components.AppGradientBackground
 import com.krzywdek19.gymnasiosmobile.core.ui.components.AppTopBar
 import com.krzywdek19.gymnasiosmobile.core.ui.components.EmptyStateCard
+import com.krzywdek19.gymnasiosmobile.core.ui.components.LogoutAction
 import com.krzywdek19.gymnasiosmobile.core.ui.components.MetricTile
 import com.krzywdek19.gymnasiosmobile.core.ui.components.PrimaryButton
 
@@ -34,6 +35,7 @@ fun DashboardScreen(
     onTrainingPlansClick: () -> Unit,
     onWorkoutHistoryClick: () -> Unit,
     onWorkoutSessionReady: (String) -> Unit,
+    onLogoutClick: () -> Unit,
     viewModel: DashboardViewModel = viewModel(
         factory = DashboardViewModelFactory()
     )
@@ -51,7 +53,10 @@ fun DashboardScreen(
             topBar = {
                 AppTopBar(
                     title = stringResource(R.string.dashboard_title),
-                    subtitle = stringResource(R.string.dashboard_subtitle)
+                    subtitle = stringResource(R.string.dashboard_subtitle),
+                    actions = {
+                        LogoutAction(onLogoutClick = onLogoutClick)
+                    }
                 )
             }
         ) { paddingValues ->
