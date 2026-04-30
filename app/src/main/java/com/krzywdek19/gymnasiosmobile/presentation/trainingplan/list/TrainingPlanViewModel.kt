@@ -30,4 +30,17 @@ class TrainingPlanViewModel(
             }
         }
     }
+
+    fun deletePlan(planId: String) {
+        viewModelScope.launch {
+            try {
+                repository.deleteTrainingPlan(planId)
+                loadPlans()
+            } catch (_: Exception) {
+                _uiState.value = TrainingPlanUiState.Error(
+                    messageRes = R.string.error_generic
+                )
+            }
+        }
+    }
 }

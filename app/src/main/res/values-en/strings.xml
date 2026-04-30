@@ -212,4 +212,14 @@
     <string name="dashboard_subtitle">Your training dashboard</string>
     <string name="active_plan_label">Active plan</string>
     <string name="current_workout_label">Current workout</string>
+
+    <string name="clear_workout_history">Clear history</string>
+    <string name="delete_workout_session">Delete session</string>
+    <string name="delete_workout_session_title">Delete workout session</string>
+    <string name="delete_workout_session_confirmation">Are you sure you want to delete this workout session?</string>
+    <string name="clear_workout_history_title">Clear workout history</string>
+    <string name="clear_workout_history_confirmation">Are you sure you want to delete all finished workout sessions?</string>
+    <string name="error_delete_workout_session_failed">Failed to delete workout session</string>
+    <string name="error_clear_workout_history_failed">Failed to clear workout history</string>
+    <string name="unknown_workout_name">Unnamed workout</string>
 </resources>

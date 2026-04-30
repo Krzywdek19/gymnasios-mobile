@@ -90,4 +90,23 @@ class WorkoutSessionRepositoryImpl(
                 .toDomain()
         }
     }
+    override suspend fun deleteWorkoutSession(workoutSessionId: String): Result<Unit> {
+        return runCatching {
+            workoutSessionApi.deleteWorkoutSession(workoutSessionId)
+        }
+    }
+
+    override suspend fun deleteFinishedWorkoutSessions(): Result<Unit> {
+        return runCatching {
+            workoutSessionApi.deleteFinishedWorkoutSessions()
+        }
+    }
+
+    override suspend fun deleteFinishedWorkoutSessionsByWorkoutTemplate(
+        workoutTemplateId: String
+    ): Result<Unit> {
+        return runCatching {
+            workoutSessionApi.deleteFinishedWorkoutSessionsByWorkoutTemplate(workoutTemplateId)
+        }
+    }
 }

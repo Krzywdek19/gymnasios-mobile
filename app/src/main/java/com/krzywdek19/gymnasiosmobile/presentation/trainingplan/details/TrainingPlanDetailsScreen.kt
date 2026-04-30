@@ -1,8 +1,6 @@
 package com.krzywdek19.gymnasiosmobile.presentation.trainingplan.details
 
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,12 +9,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -218,6 +222,7 @@ fun TrainingPlanDetailsScreen(
                                         value = reorderedWorkouts.size.toString(),
                                         modifier = Modifier.weight(1f)
                                     )
+
                                     MetricTile(
                                         label = stringResource(R.string.next_workout_metric),
                                         value = reorderedWorkouts.firstOrNull()?.name?.takeIf { it.isNotBlank() }
@@ -225,6 +230,7 @@ fun TrainingPlanDetailsScreen(
                                         modifier = Modifier.weight(1f)
                                     )
                                 }
+
                                 val actionButtonText = when {
                                     !isActivePlan -> stringResource(R.string.activate_training_plan)
                                     hasActiveWorkoutSession -> stringResource(R.string.continue_workout_session)
@@ -250,40 +256,32 @@ fun TrainingPlanDetailsScreen(
                                     modifier = Modifier.fillMaxWidth()
                                 )
 
-                                TextButton(
+                                SecondaryActionButton(
+                                    text = stringResource(R.string.workout_session_history_title),
                                     onClick = onWorkoutHistoryClick,
                                     modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.workout_session_history_title)
-                                    )
-                                }
+                                )
 
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                                 ) {
-                                    TextButton(
+                                    SecondaryActionButton(
+                                        text = stringResource(R.string.rename_plan),
                                         onClick = {
                                             editedPlanName = plan.name
                                             showRenamePlanDialog = true
                                         },
                                         modifier = Modifier.weight(1f)
-                                    ) {
-                                        Text(stringResource(R.string.rename_plan))
-                                    }
+                                    )
 
-                                    TextButton(
+                                    DangerActionButton(
+                                        text = stringResource(R.string.delete_plan),
                                         onClick = {
                                             showDeletePlanDialog = true
                                         },
                                         modifier = Modifier.weight(1f)
-                                    ) {
-                                        Text(
-                                            text = stringResource(R.string.delete_plan),
-                                            color = MaterialTheme.colorScheme.error
-                                        )
-                                    }
+                                    )
                                 }
                             }
                         }
@@ -538,6 +536,60 @@ fun TrainingPlanDetailsScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun SecondaryActionButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier,
+        shape = RoundedCornerShape(18.dp),
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.55f)
+        ),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = MaterialTheme.colorScheme.primary,
+            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
+        ),
+        contentPadding = PaddingValues(
+            horizontal = 16.dp,
+            vertical = 12.dp
+        )
+    ) {
+        Text(text = text)
+    }
+}
+
+@Composable
+private fun DangerActionButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier,
+        shape = RoundedCornerShape(18.dp),
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.error.copy(alpha = 0.65f)
+        ),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = MaterialTheme.colorScheme.error,
+            containerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.08f)
+        ),
+        contentPadding = PaddingValues(
+            horizontal = 16.dp,
+            vertical = 12.dp
+        )
+    ) {
+        Text(text = text)
     }
 }
 

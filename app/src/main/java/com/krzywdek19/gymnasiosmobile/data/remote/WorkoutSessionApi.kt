@@ -6,6 +6,7 @@ import com.krzywdek19.gymnasiosmobile.data.remote.dto.SetSessionDto
 import com.krzywdek19.gymnasiosmobile.data.remote.dto.WorkoutSessionDto
 import com.krzywdek19.gymnasiosmobile.data.remote.dto.WorkoutTemplateDto
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -45,4 +46,17 @@ interface WorkoutSessionApi {
         @Path("setSessionId") setSessionId: String,
         @Body request: UpdateSetRequest
     ): SetSessionDto
+
+    @DELETE("api/v1/workout-sessions/{workoutSessionId}")
+    suspend fun deleteWorkoutSession(
+        @Path("workoutSessionId") workoutSessionId: String
+    )
+
+    @DELETE("api/v1/workout-sessions/history")
+    suspend fun deleteFinishedWorkoutSessions()
+
+    @DELETE("api/v1/workout-sessions/history/workout-templates/{workoutTemplateId}")
+    suspend fun deleteFinishedWorkoutSessionsByWorkoutTemplate(
+        @Path("workoutTemplateId") workoutTemplateId: String
+    )
 }

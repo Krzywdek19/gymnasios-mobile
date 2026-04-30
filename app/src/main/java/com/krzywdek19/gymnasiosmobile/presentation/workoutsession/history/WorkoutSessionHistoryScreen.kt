@@ -1,5 +1,6 @@
 package com.krzywdek19.gymnasiosmobile.presentation.workoutsession.history
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,16 +13,27 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -48,6 +60,9 @@ fun WorkoutSessionHistoryScreen(
     )
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    var sessionToDelete by remember { mutableStateOf<WorkoutSession?>(null) }
+    var showClearHistoryDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.loadWorkoutSessions()
@@ -99,22 +114,105 @@ fun WorkoutSessionHistoryScreen(
 
                 is WorkoutSessionHistoryUiState.Success -> {
                     WorkoutSessionHistoryContent(
-                        sessions = state.sessions,
+                        state = state,
                         paddingValues = paddingValues,
-                        onSessionClick = onSessionClick
+                        onSessionClick = onSessionClick,
+                        onDeleteSessionClick = { selectedSession ->
+                            sessionToDelete = selectedSession
+                        },
+                        onClearHistoryClick = {
+                            showClearHistoryDialog = true
+                        }
                     )
                 }
             }
         }
     }
+
+    sessionToDelete?.let { session ->
+        AlertDialog(
+            onDismissRequest = {
+                sessionToDelete = null
+            },
+            title = {
+                Text(text = stringResource(R.string.delete_workout_session_title))
+            },
+            text = {
+                Text(text = stringResource(R.string.delete_workout_session_confirmation))
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.deleteWorkoutSession(session.id)
+                        sessionToDelete = null
+                    }
+                ) {
+                    Text(
+                        text = stringResource(R.string.delete),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        sessionToDelete = null
+                    }
+                ) {
+                    Text(text = stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
+    if (showClearHistoryDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showClearHistoryDialog = false
+            },
+            title = {
+                Text(text = stringResource(R.string.clear_workout_history_title))
+            },
+            text = {
+                Text(text = stringResource(R.string.clear_workout_history_confirmation))
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.clearFinishedWorkoutHistory()
+                        showClearHistoryDialog = false
+                    }
+                ) {
+                    Text(
+                        text = stringResource(R.string.delete),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showClearHistoryDialog = false
+                    }
+                ) {
+                    Text(text = stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
 }
 
 @Composable
 private fun WorkoutSessionHistoryContent(
-    sessions: List<WorkoutSession>,
+    state: WorkoutSessionHistoryUiState.Success,
     paddingValues: PaddingValues,
-    onSessionClick: (String) -> Unit
+    onSessionClick: (String) -> Unit,
+    onDeleteSessionClick: (WorkoutSession) -> Unit,
+    onClearHistoryClick: () -> Unit
 ) {
+    val sessions = state.sessions
+    val hasFinishedSessions = sessions.any { it.status == WorkoutSessionStatus.FINISHED }
+
     if (sessions.isEmpty()) {
         Box(
             modifier = Modifier
@@ -143,14 +241,54 @@ private fun WorkoutSessionHistoryContent(
         ),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        item {
+            AppCard(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.workout_session_history_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    Text(
+                        text = stringResource(R.string.workout_session_history_subtitle),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    DangerOutlinedButton(
+                        text = stringResource(R.string.clear_workout_history),
+                        onClick = onClearHistoryClick,
+                        enabled = hasFinishedSessions && !state.isClearingHistory,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+        }
+
+        state.actionErrorMessageRes?.let { errorMessageRes ->
+            item {
+                EmptyStateCard(
+                    title = stringResource(R.string.error_generic),
+                    description = stringResource(errorMessageRes)
+                )
+            }
+        }
+
         items(
             items = sessions,
             key = { it.id }
         ) { session ->
             WorkoutSessionHistoryCard(
                 session = session,
+                isDeleting = state.deletingSessionIds.contains(session.id),
                 onClick = {
                     onSessionClick(session.id)
+                },
+                onDeleteClick = {
+                    onDeleteSessionClick(session)
                 }
             )
         }
@@ -160,7 +298,9 @@ private fun WorkoutSessionHistoryContent(
 @Composable
 private fun WorkoutSessionHistoryCard(
     session: WorkoutSession,
-    onClick: () -> Unit
+    isDeleting: Boolean,
+    onClick: () -> Unit,
+    onDeleteClick: () -> Unit
 ) {
     val completedSets = session.exercises.sumOf { exercise ->
         exercise.sets.count { it.completed }
@@ -177,7 +317,7 @@ private fun WorkoutSessionHistoryCard(
     }
 
     val workoutName = session.workoutTemplateName.ifBlank {
-        stringResource(R.string.workout_details_title_fallback)
+        stringResource(R.string.unknown_workout_name)
     }
 
     AppCard(
@@ -188,7 +328,24 @@ private fun WorkoutSessionHistoryCard(
         Column(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            AccentBadge(text = statusLabel)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                AccentBadge(text = statusLabel)
+
+                IconButton(
+                    onClick = onDeleteClick,
+                    enabled = !isDeleting
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(R.string.delete_workout_session),
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
 
             Text(
                 text = workoutName,
@@ -219,6 +376,41 @@ private fun WorkoutSessionHistoryCard(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun DangerOutlinedButton(
+    text: String,
+    onClick: () -> Unit,
+    enabled: Boolean,
+    modifier: Modifier = Modifier
+) {
+    OutlinedButton(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier,
+        shape = RoundedCornerShape(18.dp),
+        border = BorderStroke(
+            width = 1.dp,
+            color = if (enabled) {
+                MaterialTheme.colorScheme.error.copy(alpha = 0.65f)
+            } else {
+                MaterialTheme.colorScheme.outline.copy(alpha = 0.24f)
+            }
+        ),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = MaterialTheme.colorScheme.error,
+            containerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.08f),
+            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+            disabledContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.45f)
+        ),
+        contentPadding = PaddingValues(
+            horizontal = 16.dp,
+            vertical = 12.dp
+        )
+    ) {
+        Text(text = text)
     }
 }
 

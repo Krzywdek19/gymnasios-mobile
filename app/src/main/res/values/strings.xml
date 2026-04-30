@@ -213,4 +213,13 @@
     <string name="active_plan_label">Aktywny plan</string>
     <string name="current_workout_label">Aktualny trening</string>
 
+    <string name="clear_workout_history">Wyczyść historię</string>
+    <string name="delete_workout_session">Usuń sesję</string>
+    <string name="delete_workout_session_title">Usuń sesję treningową</string>
+    <string name="delete_workout_session_confirmation">Czy na pewno chcesz usunąć tę sesję treningową?</string>
+    <string name="clear_workout_history_title">Wyczyść historię treningów</string>
+    <string name="clear_workout_history_confirmation">Czy na pewno chcesz usunąć wszystkie zakończone sesje treningowe?</string>
+    <string name="error_delete_workout_session_failed">Nie udało się usunąć sesji treningowej</string>
+    <string name="error_clear_workout_history_failed">Nie udało się wyczyścić historii treningów</string>
+    <string name="unknown_workout_name">Trening bez nazwy</string>
 </resources>

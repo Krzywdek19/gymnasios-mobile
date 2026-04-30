@@ -8,8 +8,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -25,7 +29,8 @@ import com.krzywdek19.gymnasiosmobile.domain.model.TrainingPlan
 @Composable
 fun TrainingPlanItem(
     plan: TrainingPlan,
-    onClick: (TrainingPlan) -> Unit
+    onClick: (TrainingPlan) -> Unit,
+    onDeleteClick: (TrainingPlan) -> Unit
 ) {
     val workoutCount = plan.workouts.size
     val nextWorkoutName = plan.workouts
@@ -88,6 +93,18 @@ fun TrainingPlanItem(
                     text = "${stringResource(R.string.next_workout_label)}: $nextWorkoutName",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            IconButton(
+                onClick = {
+                    onDeleteClick(plan)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = stringResource(R.string.delete_plan),
+                    tint = MaterialTheme.colorScheme.error
                 )
             }
         }

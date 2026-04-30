@@ -8,7 +8,10 @@ sealed interface WorkoutSessionHistoryUiState {
     data object Loading : WorkoutSessionHistoryUiState
 
     data class Success(
-        val sessions: List<WorkoutSession>
+        val sessions: List<WorkoutSession>,
+        val deletingSessionIds: Set<String> = emptySet(),
+        val isClearingHistory: Boolean = false,
+        @StringRes val actionErrorMessageRes: Int? = null
     ) : WorkoutSessionHistoryUiState
 
     data class Error(

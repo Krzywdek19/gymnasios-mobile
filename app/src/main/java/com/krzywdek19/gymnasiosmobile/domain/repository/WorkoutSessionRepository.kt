@@ -27,4 +27,11 @@ interface WorkoutSessionRepository {
         rir: Int?,
         completed: Boolean
     ): Result<SetSession>
+    suspend fun deleteWorkoutSession(workoutSessionId: String): Result<Unit>
+
+    suspend fun deleteFinishedWorkoutSessions(): Result<Unit>
+
+    suspend fun deleteFinishedWorkoutSessionsByWorkoutTemplate(
+        workoutTemplateId: String
+    ): Result<Unit>
 }
