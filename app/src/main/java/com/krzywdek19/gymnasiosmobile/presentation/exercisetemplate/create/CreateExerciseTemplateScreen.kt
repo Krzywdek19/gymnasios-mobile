@@ -91,6 +91,18 @@ fun CreateExerciseTemplateScreen(
                     )
 
                     AppTextField(
+                        value = uiState.restBetweenSetsSeconds,
+                        onValueChange = viewModel::onRestBetweenSetsSecondsChanged,
+                        label = stringResource(R.string.rest_between_sets_seconds_label)
+                    )
+
+                    AppTextField(
+                        value = uiState.restAfterExerciseSeconds,
+                        onValueChange = viewModel::onRestAfterExerciseSecondsChanged,
+                        label = stringResource(R.string.rest_after_exercise_seconds_label)
+                    )
+
+                    AppTextField(
                         value = uiState.notes,
                         onValueChange = viewModel::onNotesChange,
                         label = stringResource(R.string.notes_label),

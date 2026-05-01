@@ -3,6 +3,7 @@ package com.krzywdek19.gymnasiosmobile.presentation.dashboard
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.krzywdek19.gymnasiosmobile.R
+import com.krzywdek19.gymnasiosmobile.domain.model.TrainingPlan
 import com.krzywdek19.gymnasiosmobile.domain.repository.TrainingPlanRepository
 import com.krzywdek19.gymnasiosmobile.domain.repository.WorkoutSessionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,40 +25,45 @@ class DashboardViewModel(
         viewModelScope.launch {
             _uiState.value = DashboardUiState.Loading
 
-            try {
-                val activePlan = trainingPlanRepository.getActiveTrainingPlan()
+            val activePlan = loadActivePlanOrNull()
 
-                val activeSession = workoutSessionRepository
-                    .getActiveWorkoutSession()
-                    .getOrNull()
+            if (activePlan == null) {
+                _uiState.value = DashboardUiState.Success(
+                    activePlanId = null,
+                    activePlanName = "",
+                    workoutName = "",
+                    activeWorkoutSessionId = null,
+                    canStartWorkout = false
+                )
+                return@launch
+            }
 
-                if (activeSession != null) {
-                    _uiState.value = DashboardUiState.Success(
-                        activePlanId = activePlan.id,
-                        activePlanName = activePlan.name,
-                        workoutName = activeSession.workoutTemplateName,
-                        activeWorkoutSessionId = activeSession.id,
-                        canStartWorkout = true
-                    )
-                    return@launch
-                }
+            val activeSession = workoutSessionRepository
+                .getActiveWorkoutSession()
+                .getOrNull()
 
-                val nextWorkout = workoutSessionRepository
-                    .getNextWorkoutTemplate()
-                    .getOrNull()
-
+            if (activeSession != null) {
                 _uiState.value = DashboardUiState.Success(
                     activePlanId = activePlan.id,
                     activePlanName = activePlan.name,
-                    workoutName = nextWorkout?.name.orEmpty(),
-                    activeWorkoutSessionId = null,
-                    canStartWorkout = nextWorkout != null
+                    workoutName = activeSession.workoutTemplateName,
+                    activeWorkoutSessionId = activeSession.id,
+                    canStartWorkout = true
                 )
-            } catch (_: Exception) {
-                _uiState.value = DashboardUiState.Error(
-                    messageRes = R.string.error_dashboard_load_failed
-                )
+                return@launch
             }
+
+            val nextWorkout = workoutSessionRepository
+                .getNextWorkoutTemplate()
+                .getOrNull()
+
+            _uiState.value = DashboardUiState.Success(
+                activePlanId = activePlan.id,
+                activePlanName = activePlan.name,
+                workoutName = nextWorkout?.name.orEmpty(),
+                activeWorkoutSessionId = null,
+                canStartWorkout = nextWorkout != null
+            )
         }
     }
 
@@ -114,6 +120,14 @@ class DashboardViewModel(
                         )
                     }
                 }
+        }
+    }
+
+    private suspend fun loadActivePlanOrNull(): TrainingPlan? {
+        return try {
+            trainingPlanRepository.getActiveTrainingPlan()
+        } catch (_: Exception) {
+            null
         }
     }
 }

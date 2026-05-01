@@ -1,6 +1,5 @@
 package com.krzywdek19.gymnasiosmobile.domain.repository
 
-import com.krzywdek19.gymnasiosmobile.data.remote.dto.UpdateExerciseTemplateRequest
 import com.krzywdek19.gymnasiosmobile.domain.model.ExerciseTemplate
 
 interface ExerciseTemplateRepository {
@@ -12,17 +11,21 @@ interface ExerciseTemplateRepository {
         name: String,
         setsCount: Int,
         reps: String,
-        orderIndex: Int,
-        notes: String?
+        notes: String,
+        restBetweenSetsSeconds: Int,
+        restAfterExerciseSeconds: Int,
+        orderIndex: Int
     ): ExerciseTemplate
 
     suspend fun updateExercise(
-        id: String,
+        exerciseTemplateId: String,
         name: String,
         setsCount: Int,
         reps: String,
-        orderIndex: Int,
-        notes: String?
+        notes: String,
+        restBetweenSetsSeconds: Int,
+        restAfterExerciseSeconds: Int,
+        orderIndex: Int
     ): ExerciseTemplate
 
     suspend fun deleteExerciseById(id: String)

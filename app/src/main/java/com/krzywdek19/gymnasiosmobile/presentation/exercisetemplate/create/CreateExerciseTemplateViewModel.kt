@@ -14,6 +14,8 @@ data class CreateExerciseTemplateUiState(
     val setsCount: String = "",
     val reps: String = "",
     val notes: String = "",
+    val restBetweenSetsSeconds: String = "120",
+    val restAfterExerciseSeconds: String = "180",
     val isSaving: Boolean = false,
     val errorMessageRes: Int? = null,
     val savedSuccessfully: Boolean = false
@@ -43,6 +45,14 @@ class CreateExerciseTemplateViewModel(
         updateForm(notes = value)
     }
 
+    fun onRestBetweenSetsSecondsChanged(value: String) {
+        updateForm(restBetweenSetsSeconds = value)
+    }
+
+    fun onRestAfterExerciseSecondsChanged(value: String) {
+        updateForm(restAfterExerciseSeconds = value)
+    }
+
     fun saveExercise(orderIndex: Int) {
         val currentState = _uiState.value
         val validatedInput = validateInput(currentState) ?: return
@@ -59,8 +69,10 @@ class CreateExerciseTemplateViewModel(
                     name = validatedInput.name,
                     setsCount = validatedInput.setsCount,
                     reps = validatedInput.reps,
-                    orderIndex = orderIndex,
-                    notes = validatedInput.notes
+                    notes = validatedInput.notes,
+                    restBetweenSetsSeconds = validatedInput.restBetweenSetsSeconds,
+                    restAfterExerciseSeconds = validatedInput.restAfterExerciseSeconds,
+                    orderIndex = orderIndex
                 )
 
                 _uiState.value = _uiState.value.copy(
@@ -85,13 +97,17 @@ class CreateExerciseTemplateViewModel(
         name: String = _uiState.value.name,
         setsCount: String = _uiState.value.setsCount,
         reps: String = _uiState.value.reps,
-        notes: String = _uiState.value.notes
+        notes: String = _uiState.value.notes,
+        restBetweenSetsSeconds: String = _uiState.value.restBetweenSetsSeconds,
+        restAfterExerciseSeconds: String = _uiState.value.restAfterExerciseSeconds
     ) {
         _uiState.value = _uiState.value.copy(
             name = name,
             setsCount = setsCount,
             reps = reps,
             notes = notes,
+            restBetweenSetsSeconds = restBetweenSetsSeconds,
+            restAfterExerciseSeconds = restAfterExerciseSeconds,
             errorMessageRes = null
         )
     }
@@ -101,6 +117,8 @@ class CreateExerciseTemplateViewModel(
         val reps = state.reps.trim()
         val notes = state.notes.trim().ifBlank { null }
         val setsCount = state.setsCount.trim().toIntOrNull()
+        val restBetweenSetsSeconds = state.restBetweenSetsSeconds.trim().toIntOrNull()
+        val restAfterExerciseSeconds = state.restAfterExerciseSeconds.trim().toIntOrNull()
 
         when {
             name.isBlank() -> {
@@ -117,13 +135,25 @@ class CreateExerciseTemplateViewModel(
                 _uiState.value = state.copy(errorMessageRes = R.string.error_reps_required)
                 return null
             }
+
+            restBetweenSetsSeconds == null || restBetweenSetsSeconds < 0 -> {
+                _uiState.value = state.copy(errorMessageRes = R.string.error_exercise_form_invalid)
+                return null
+            }
+
+            restAfterExerciseSeconds == null || restAfterExerciseSeconds < 0 -> {
+                _uiState.value = state.copy(errorMessageRes = R.string.error_exercise_form_invalid)
+                return null
+            }
         }
 
         return ValidatedExerciseInput(
             name = name,
             setsCount = setsCount,
             reps = reps,
-            notes = notes
+            notes = notes,
+            restBetweenSetsSeconds = restBetweenSetsSeconds,
+            restAfterExerciseSeconds = restAfterExerciseSeconds
         )
     }
 
@@ -131,6 +161,8 @@ class CreateExerciseTemplateViewModel(
         val name: String,
         val setsCount: Int,
         val reps: String,
-        val notes: String?
+        val notes: String?,
+        val restBetweenSetsSeconds: Int,
+        val restAfterExerciseSeconds: Int
     )
 }

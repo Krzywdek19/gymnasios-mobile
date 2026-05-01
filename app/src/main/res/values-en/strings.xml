@@ -222,4 +222,10 @@
     <string name="error_delete_workout_session_failed">Failed to delete workout session</string>
     <string name="error_clear_workout_history_failed">Failed to clear workout history</string>
     <string name="unknown_workout_name">Unnamed workout</string>
+
+    <string name="no_active_plan_title">No active plan</string>
+    <string name="no_active_plan_description">Create or activate a training plan to start working out.</string>
+    <string name="rest_between_sets_seconds_label">Rest between sets (seconds)</string>
+    <string name="rest_after_exercise_seconds_label">Rest after exercise (seconds)</string>
+    <string name="error_exercise_form_invalid">Enter valid exercise details</string>
 </resources>

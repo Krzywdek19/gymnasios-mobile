@@ -1,5 +1,6 @@
 package com.krzywdek19.gymnasiosmobile.presentation.dashboard
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,10 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -107,6 +111,7 @@ private fun DashboardContent(
     onWorkoutHistoryClick: () -> Unit
 ) {
     val hasActiveSession = state.activeWorkoutSessionId != null
+    val hasActivePlan = state.activePlanId != null
 
     val workoutLabel = if (hasActiveSession) {
         stringResource(R.string.current_workout_label)
@@ -131,25 +136,32 @@ private fun DashboardContent(
             .padding(horizontal = 20.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        AppCard(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+        if (!hasActivePlan) {
+            EmptyStateCard(
+                title = stringResource(R.string.no_active_plan_title),
+                description = stringResource(R.string.no_active_plan_description)
+            )
+        } else {
+            AppCard(
+                modifier = Modifier.fillMaxWidth()
             ) {
-                MetricTile(
-                    label = stringResource(R.string.active_plan_label),
-                    value = state.activePlanName.ifBlank {
-                        stringResource(R.string.not_available)
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    MetricTile(
+                        label = stringResource(R.string.active_plan_label),
+                        value = state.activePlanName.ifBlank {
+                            stringResource(R.string.not_available)
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
-                MetricTile(
-                    label = workoutLabel,
-                    value = workoutName,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                    MetricTile(
+                        label = workoutLabel,
+                        value = workoutName,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
 
@@ -166,13 +178,15 @@ private fun DashboardContent(
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                PrimaryButton(
-                    text = mainButtonText,
-                    onClick = onStartOrContinueWorkout,
-                    enabled = state.canStartWorkout && !state.isStartingWorkout,
-                    isLoading = state.isStartingWorkout,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                if (hasActivePlan) {
+                    PrimaryButton(
+                        text = mainButtonText,
+                        onClick = onStartOrContinueWorkout,
+                        enabled = state.canStartWorkout && !state.isStartingWorkout,
+                        isLoading = state.isStartingWorkout,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
 
                 PrimaryButton(
                     text = stringResource(R.string.training_plans_title),
@@ -180,14 +194,11 @@ private fun DashboardContent(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                TextButton(
+                SecondaryDashboardButton(
+                    text = stringResource(R.string.workout_session_history_title),
                     onClick = onWorkoutHistoryClick,
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = stringResource(R.string.workout_session_history_title)
-                    )
-                }
+                )
             }
         }
     }
@@ -219,5 +230,32 @@ private fun DashboardErrorContent(
                 .fillMaxWidth()
                 .padding(top = 16.dp)
         )
+    }
+}
+
+@Composable
+private fun SecondaryDashboardButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier,
+        shape = RoundedCornerShape(18.dp),
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.55f)
+        ),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = MaterialTheme.colorScheme.primary,
+            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
+        ),
+        contentPadding = PaddingValues(
+            horizontal = 16.dp,
+            vertical = 12.dp
+        )
+    ) {
+        Text(text = text)
     }
 }

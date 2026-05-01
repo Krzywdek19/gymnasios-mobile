@@ -5,5 +5,7 @@ data class ExerciseSessionDto(
     val name: String?,
     val orderIndex: Int?,
     val setsCount: Int?,
+    val restBetweenSetsSeconds: Int?,
+    val restAfterExerciseSeconds: Int?,
     val sets: List<SetSessionDto>?
 )

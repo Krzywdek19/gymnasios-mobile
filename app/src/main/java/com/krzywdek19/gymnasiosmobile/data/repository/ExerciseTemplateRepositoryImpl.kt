@@ -21,39 +21,47 @@ class ExerciseTemplateRepositoryImpl(
         name: String,
         setsCount: Int,
         reps: String,
-        orderIndex: Int,
-        notes: String?
+        notes: String,
+        restBetweenSetsSeconds: Int,
+        restAfterExerciseSeconds: Int,
+        orderIndex: Int
     ): ExerciseTemplate {
-
-        val request = CreateExerciseTemplateRequest(
+        return api.createExerciseTemplate(
             workoutTemplateId = workoutTemplateId,
-            name = name,
-            setsCount = setsCount,
-            reps = reps,
-            orderIndex = orderIndex,
-            notes = notes
-        )
-
-        return api.createExerciseTemplate(workoutTemplateId, request).toDomain()
+            request = CreateExerciseTemplateRequest(
+                name = name,
+                notes = notes.takeIf { it.isNotBlank() },
+                setsCount = setsCount,
+                reps = reps.takeIf { it.isNotBlank() },
+                restBetweenSetsSeconds = restBetweenSetsSeconds,
+                restAfterExerciseSeconds = restAfterExerciseSeconds,
+                orderIndex = orderIndex
+            )
+        ).toDomain()
     }
 
     override suspend fun updateExercise(
-        id: String,
+        exerciseTemplateId: String,
         name: String,
         setsCount: Int,
         reps: String,
-        orderIndex: Int,
-        notes: String?
+        notes: String,
+        restBetweenSetsSeconds: Int,
+        restAfterExerciseSeconds: Int,
+        orderIndex: Int
     ): ExerciseTemplate {
-        val request = UpdateExerciseTemplateRequest(
-            name = name,
-            setsCount = setsCount,
-            reps = reps,
-            orderIndex = orderIndex,
-            notes = notes
-        )
-
-        return api.updateExerciseTemplate(id, request).toDomain()
+        return api.updateExerciseTemplate(
+            exerciseTemplateId = exerciseTemplateId,
+            request = UpdateExerciseTemplateRequest(
+                name = name,
+                notes = notes.takeIf { it.isNotBlank() },
+                orderIndex = orderIndex,
+                reps = reps.takeIf { it.isNotBlank() },
+                restBetweenSetsSeconds = restBetweenSetsSeconds,
+                restAfterExerciseSeconds = restAfterExerciseSeconds,
+                setsCount = setsCount
+            )
+        ).toDomain()
     }
 
     override suspend fun deleteExerciseById(id: String) {

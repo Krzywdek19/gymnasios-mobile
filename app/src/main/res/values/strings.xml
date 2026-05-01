@@ -222,4 +222,10 @@
     <string name="error_delete_workout_session_failed">Nie udało się usunąć sesji treningowej</string>
     <string name="error_clear_workout_history_failed">Nie udało się wyczyścić historii treningów</string>
     <string name="unknown_workout_name">Trening bez nazwy</string>
+
+    <string name="no_active_plan_title">Brak aktywnego planu</string>
+    <string name="no_active_plan_description">Utwórz albo aktywuj plan treningowy, aby rozpocząć trening.</string>
+    <string name="rest_between_sets_seconds_label">Przerwa między seriami (sekundy)</string>
+    <string name="rest_after_exercise_seconds_label">Przerwa po ćwiczeniu (sekundy)</string>
+    <string name="error_exercise_form_invalid">Podaj poprawne dane ćwiczenia</string>
 </resources>

@@ -9,6 +9,8 @@ fun ExerciseSessionDto.toDomain(): ExerciseSession {
         name = name.orEmpty(),
         orderIndex = orderIndex ?: 0,
         setsCount = setsCount ?: 0,
+        restBetweenSetsSeconds = restBetweenSetsSeconds ?: 120,
+        restAfterExerciseSeconds = restAfterExerciseSeconds ?: 180,
         sets = sets
             .orEmpty()
             .map { it.toDomain() }
