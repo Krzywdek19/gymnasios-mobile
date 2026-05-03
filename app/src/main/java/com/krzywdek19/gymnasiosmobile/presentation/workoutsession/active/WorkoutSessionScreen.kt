@@ -1,5 +1,6 @@
 package com.krzywdek19.gymnasiosmobile.presentation.workoutsession.active
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,11 +12,14 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -43,6 +47,9 @@ import com.krzywdek19.gymnasiosmobile.core.ui.components.MetricTile
 import com.krzywdek19.gymnasiosmobile.core.ui.components.PrimaryButton
 import com.krzywdek19.gymnasiosmobile.domain.model.ExerciseSession
 import com.krzywdek19.gymnasiosmobile.domain.model.SetSession
+import com.krzywdek19.gymnasiosmobile.presentation.workoutsession.active.state.GuidedWorkoutPhase
+import com.krzywdek19.gymnasiosmobile.presentation.workoutsession.active.state.WorkoutExecutionMode
+import com.krzywdek19.gymnasiosmobile.presentation.workoutsession.active.state.WorkoutSessionUiState
 
 @Composable
 fun WorkoutSessionScreen(
@@ -130,7 +137,11 @@ fun WorkoutSessionScreen(
                     WorkoutSessionContent(
                         state = state,
                         paddingValues = paddingValues,
-                        onSaveSet = viewModel::saveSet
+                        onListModeClick = viewModel::switchToListMode,
+                        onGuidedModeClick = viewModel::switchToGuidedMode,
+                        onSaveSet = viewModel::saveSet,
+                        onSaveCurrentGuidedSet = viewModel::saveCurrentGuidedSet,
+                        onSkipRest = viewModel::skipRest
                     )
                 }
             }
@@ -142,20 +153,21 @@ fun WorkoutSessionScreen(
 private fun WorkoutSessionContent(
     state: WorkoutSessionUiState.Success,
     paddingValues: PaddingValues,
+    onListModeClick: () -> Unit,
+    onGuidedModeClick: () -> Unit,
     onSaveSet: (
         setSessionId: String,
         repsText: String,
         weightText: String,
         rirText: String
-    ) -> Unit
+    ) -> Unit,
+    onSaveCurrentGuidedSet: (
+        repsText: String,
+        weightText: String,
+        rirText: String
+    ) -> Unit,
+    onSkipRest: () -> Unit
 ) {
-    val session = state.session
-    val exercises = session.exercises
-    val totalSets = exercises.sumOf { it.sets.size }
-    val completedSets = exercises.sumOf { exercise ->
-        exercise.sets.count { it.completed }
-    }
-
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -169,28 +181,11 @@ private fun WorkoutSessionContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
-            AppCard(modifier = Modifier.fillMaxWidth()) {
-                AccentBadge(
-                    text = stringResource(R.string.workout_session_in_progress)
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    MetricTile(
-                        label = stringResource(R.string.exercises_count_label),
-                        value = exercises.size.toString(),
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    MetricTile(
-                        label = stringResource(R.string.completed_sets_label),
-                        value = "$completedSets/$totalSets",
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-            }
+            WorkoutModeSwitchCard(
+                selectedMode = state.displayMode,
+                onListModeClick = onListModeClick,
+                onGuidedModeClick = onGuidedModeClick
+            )
         }
 
         state.actionErrorMessageRes?.let { errorMessageRes ->
@@ -202,24 +197,363 @@ private fun WorkoutSessionContent(
             }
         }
 
-        if (exercises.isEmpty()) {
-            item {
+        when (state.displayMode) {
+            WorkoutExecutionMode.LIST -> {
+                item {
+                    WorkoutSessionSummaryCard(state = state)
+                }
+
+                if (state.session.exercises.isEmpty()) {
+                    item {
+                        EmptyStateCard(
+                            title = stringResource(R.string.no_exercises_in_session),
+                            description = stringResource(R.string.no_exercises_in_session_description)
+                        )
+                    }
+                } else {
+                    items(
+                        items = state.session.exercises,
+                        key = { it.id }
+                    ) { exercise ->
+                        ExerciseSessionCard(
+                            exercise = exercise,
+                            savingSetIds = state.savingSetIds,
+                            onSaveSet = onSaveSet
+                        )
+                    }
+                }
+            }
+
+            WorkoutExecutionMode.GUIDED -> {
+                item {
+                    GuidedWorkoutContent(
+                        state = state,
+                        onSaveCurrentGuidedSet = onSaveCurrentGuidedSet,
+                        onSkipRest = onSkipRest
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun WorkoutModeSwitchCard(
+    selectedMode: WorkoutExecutionMode,
+    onListModeClick: () -> Unit,
+    onGuidedModeClick: () -> Unit
+) {
+    AppCard(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(R.string.workout_mode_label),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            ModeButton(
+                text = stringResource(R.string.workout_mode_list),
+                selected = selectedMode == WorkoutExecutionMode.LIST,
+                onClick = onListModeClick,
+                modifier = Modifier.weight(1f)
+            )
+
+            ModeButton(
+                text = stringResource(R.string.workout_mode_guided),
+                selected = selectedMode == WorkoutExecutionMode.GUIDED,
+                onClick = onGuidedModeClick,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun ModeButton(
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    if (selected) {
+        PrimaryButton(
+            text = text,
+            onClick = onClick,
+            modifier = modifier
+        )
+    } else {
+        OutlinedButton(
+            onClick = onClick,
+            modifier = modifier,
+            shape = RoundedCornerShape(18.dp),
+            border = BorderStroke(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.55f)
+            ),
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = MaterialTheme.colorScheme.primary,
+                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
+            ),
+            contentPadding = PaddingValues(
+                horizontal = 16.dp,
+                vertical = 12.dp
+            )
+        ) {
+            Text(text = text)
+        }
+    }
+}
+
+@Composable
+private fun WorkoutSessionSummaryCard(
+    state: WorkoutSessionUiState.Success
+) {
+    val exercises = state.session.exercises
+    val totalSets = exercises.sumOf { it.sets.size }
+    val completedSets = exercises.sumOf { exercise ->
+        exercise.sets.count { it.completed }
+    }
+
+    AppCard(modifier = Modifier.fillMaxWidth()) {
+        AccentBadge(
+            text = stringResource(R.string.workout_session_in_progress)
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            MetricTile(
+                label = stringResource(R.string.exercises_count_label),
+                value = exercises.size.toString(),
+                modifier = Modifier.weight(1f)
+            )
+
+            MetricTile(
+                label = stringResource(R.string.completed_sets_label),
+                value = "$completedSets/$totalSets",
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun GuidedWorkoutContent(
+    state: WorkoutSessionUiState.Success,
+    onSaveCurrentGuidedSet: (
+        repsText: String,
+        weightText: String,
+        rirText: String
+    ) -> Unit,
+    onSkipRest: () -> Unit
+) {
+    val guidedState = state.guidedWorkoutState
+    val exercise = state.session.exercises.getOrNull(guidedState.currentExerciseIndex)
+    val set = exercise?.sets?.getOrNull(guidedState.currentSetIndex)
+
+    when (guidedState.phase) {
+        GuidedWorkoutPhase.SET_INPUT -> {
+            if (exercise == null || set == null) {
                 EmptyStateCard(
-                    title = stringResource(R.string.no_exercises_in_session),
-                    description = stringResource(R.string.no_exercises_in_session_description)
+                    title = stringResource(R.string.error_generic),
+                    description = stringResource(R.string.error_workout_session_load_failed)
                 )
+                return
             }
-        } else {
-            items(
-                items = exercises,
-                key = { it.id }
-            ) { exercise ->
-                ExerciseSessionCard(
-                    exercise = exercise,
-                    savingSetIds = state.savingSetIds,
-                    onSaveSet = onSaveSet
+
+            GuidedSetInputCard(
+                exercise = exercise,
+                set = set,
+                isSaving = state.savingSetIds.contains(set.id),
+                onSaveCurrentGuidedSet = onSaveCurrentGuidedSet
+            )
+        }
+
+        GuidedWorkoutPhase.REST_BETWEEN_SETS -> {
+            if (exercise == null) {
+                EmptyStateCard(
+                    title = stringResource(R.string.error_generic),
+                    description = stringResource(R.string.error_workout_session_load_failed)
                 )
+                return
             }
+
+            RestTimerCard(
+                title = stringResource(R.string.rest_between_sets_title),
+                description = stringResource(
+                    R.string.next_set_description,
+                    exercise.name,
+                    guidedState.currentSetIndex + 1,
+                    exercise.sets.size
+                ),
+                remainingSeconds = guidedState.remainingRestSeconds,
+                onSkipRest = onSkipRest
+            )
+        }
+
+        GuidedWorkoutPhase.REST_BETWEEN_EXERCISES -> {
+            RestTimerCard(
+                title = stringResource(R.string.rest_between_exercises_title),
+                description = stringResource(
+                    R.string.prepare_next_exercise_description,
+                    guidedState.nextExerciseName ?: stringResource(R.string.not_available)
+                ),
+                remainingSeconds = guidedState.remainingRestSeconds,
+                onSkipRest = onSkipRest
+            )
+        }
+
+        GuidedWorkoutPhase.FINISHED -> {
+            EmptyStateCard(
+                title = stringResource(R.string.guided_workout_finished_title),
+                description = stringResource(R.string.guided_workout_finished_description)
+            )
+        }
+    }
+}
+
+@Composable
+private fun GuidedSetInputCard(
+    exercise: ExerciseSession,
+    set: SetSession,
+    isSaving: Boolean,
+    onSaveCurrentGuidedSet: (
+        repsText: String,
+        weightText: String,
+        rirText: String
+    ) -> Unit
+) {
+    var repsText by remember(set.id, set.reps) {
+        mutableStateOf(set.reps?.toString().orEmpty())
+    }
+
+    var weightText by remember(set.id, set.weight) {
+        mutableStateOf(set.weight?.toString().orEmpty())
+    }
+
+    var rirText by remember(set.id, set.rir) {
+        mutableStateOf(set.rir?.toString().orEmpty())
+    }
+
+    AppCard(modifier = Modifier.fillMaxWidth()) {
+        AccentBadge(
+            text = stringResource(
+                R.string.guided_set_badge,
+                set.orderIndex,
+                exercise.sets.size
+            )
+        )
+
+        Text(
+            text = exercise.name,
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+
+        Text(
+            text = stringResource(R.string.set_number, set.orderIndex),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            OutlinedTextField(
+                value = repsText,
+                onValueChange = { repsText = it },
+                label = { Text(stringResource(R.string.reps_label)) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.weight(1f)
+            )
+
+            OutlinedTextField(
+                value = weightText,
+                onValueChange = { weightText = it },
+                label = { Text(stringResource(R.string.weight_label)) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                modifier = Modifier.weight(1f)
+            )
+
+            OutlinedTextField(
+                value = rirText,
+                onValueChange = { rirText = it },
+                label = { Text(stringResource(R.string.rir_label)) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        PrimaryButton(
+            text = stringResource(R.string.done),
+            onClick = {
+                onSaveCurrentGuidedSet(
+                    repsText,
+                    weightText,
+                    rirText
+                )
+            },
+            enabled = !isSaving,
+            isLoading = isSaving,
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+@Composable
+private fun RestTimerCard(
+    title: String,
+    description: String,
+    remainingSeconds: Int,
+    onSkipRest: () -> Unit
+) {
+    AppCard(modifier = Modifier.fillMaxWidth()) {
+        AccentBadge(text = stringResource(R.string.rest_timer_badge))
+
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+
+        Text(
+            text = formatTimer(remainingSeconds),
+            style = MaterialTheme.typography.displayMedium,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        Text(
+            text = description,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        OutlinedButton(
+            onClick = onSkipRest,
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(18.dp),
+            border = BorderStroke(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.55f)
+            ),
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = MaterialTheme.colorScheme.primary,
+                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
+            ),
+            contentPadding = PaddingValues(
+                horizontal = 16.dp,
+                vertical = 12.dp
+            )
+        ) {
+            Text(text = stringResource(R.string.skip_rest))
         }
     }
 }
@@ -248,6 +582,16 @@ private fun ExerciseSessionCard(
             Text(
                 text = stringResource(R.string.sets_label) + ": ${exercise.setsCount}",
                 style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Text(
+                text = stringResource(
+                    R.string.rest_summary_format,
+                    exercise.restBetweenSetsSeconds,
+                    exercise.restAfterExerciseSeconds
+                ),
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
@@ -362,4 +706,12 @@ private fun SetSessionRow(
             modifier = Modifier.fillMaxWidth()
         )
     }
+}
+
+private fun formatTimer(seconds: Int): String {
+    val safeSeconds = seconds.coerceAtLeast(0)
+    val minutesPart = safeSeconds / 60
+    val secondsPart = safeSeconds % 60
+
+    return "%02d:%02d".format(minutesPart, secondsPart)
 }

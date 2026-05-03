@@ -228,4 +228,19 @@
     <string name="rest_between_sets_seconds_label">Rest between sets (seconds)</string>
     <string name="rest_after_exercise_seconds_label">Rest after exercise (seconds)</string>
     <string name="error_exercise_form_invalid">Enter valid exercise details</string>
+
+    <string name="workout_mode_label">Workout mode</string>
+    <string name="workout_mode_list">List</string>
+    <string name="workout_mode_guided">Guided</string>
+    <string name="done">Done</string>
+    <string name="rest_timer_badge">Rest timer</string>
+    <string name="rest_between_sets_title">Rest between sets</string>
+    <string name="rest_between_exercises_title">Rest before next exercise</string>
+    <string name="next_set_description">Next: %1$s, set %2$d/%3$d</string>
+    <string name="prepare_next_exercise_description">Prepare for: %1$s</string>
+    <string name="guided_set_badge">Set %1$d/%2$d</string>
+    <string name="skip_rest">Skip rest</string>
+    <string name="guided_workout_finished_title">Workout completed</string>
+    <string name="guided_workout_finished_description">All sets are completed. You can finish the workout now.</string>
+    <string name="rest_summary_format">Rest: %1$d s between sets • %2$d s after exercise</string>
 </resources>

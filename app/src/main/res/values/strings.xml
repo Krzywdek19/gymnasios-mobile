@@ -228,4 +228,19 @@
     <string name="rest_between_sets_seconds_label">Przerwa między seriami (sekundy)</string>
     <string name="rest_after_exercise_seconds_label">Przerwa po ćwiczeniu (sekundy)</string>
     <string name="error_exercise_form_invalid">Podaj poprawne dane ćwiczenia</string>
+
+    <string name="workout_mode_label">Tryb treningu</string>
+    <string name="workout_mode_list">Lista</string>
+    <string name="workout_mode_guided">Prowadzony</string>
+    <string name="done">Zrobione</string>
+    <string name="rest_timer_badge">Timer przerwy</string>
+    <string name="rest_between_sets_title">Przerwa między seriami</string>
+    <string name="rest_between_exercises_title">Przerwa przed następnym ćwiczeniem</string>
+    <string name="next_set_description">Następnie: %1$s, seria %2$d/%3$d</string>
+    <string name="prepare_next_exercise_description">Przygotuj się: %1$s</string>
+    <string name="guided_set_badge">Seria %1$d/%2$d</string>
+    <string name="skip_rest">Pomiń przerwę</string>
+    <string name="guided_workout_finished_title">Trening ukończony</string>
+    <string name="guided_workout_finished_description">Wszystkie serie są ukończone. Możesz zakończyć trening.</string>
+    <string name="rest_summary_format">Przerwa: %1$d s między seriami • %2$d s po ćwiczeniu</string>
 </resources>
